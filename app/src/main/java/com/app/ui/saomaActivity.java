@@ -34,6 +34,9 @@ import com.app.utils.ToastUtils;
 import com.app.view.CustomProgressDialog;
 import com.app.zxing.android.CaptureActivity;
 
+import org.zoolu.sip.address.NameAddress;
+import org.zoolu.sip.address.SipURL;
+
 import java.util.List;
 
 import butterknife.Bind;
@@ -124,6 +127,9 @@ public class saomaActivity extends Activity {
         if (resultCode == RESULT_OK) {
             if (data != null) {
                 devid = data.getStringExtra(DECODED_CONTENT_KEY);
+                String devName = "pad";
+                SipURL sipURL = new SipURL(devid, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
+                SipInfo.toDev = new NameAddress(devName, sipURL);
                 //Bitmap bitmap = data.getParcelableExtra(DECODED_BITMAP_KEY);
                 new Thread(new Runnable() {
                     @Override
@@ -188,6 +194,9 @@ public class saomaActivity extends Activity {
                 t1.setText("设备1：  " + devid);
                 input1.setVisibility(View.INVISIBLE);
                 b1.setVisibility(View.INVISIBLE);
+                org.zoolu.sip.message.Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+                        SipInfo.user_from, BodyFactory.createListUpdate("addsuccess"));
+                SipInfo.sipUser.sendMessage(query);
                 AlertDialog dialog = new AlertDialog.Builder(saomaActivity.this)
                         .setCancelable(false)
                         .setTitle("绑定设备成功")
@@ -218,6 +227,9 @@ public class saomaActivity extends Activity {
                 t2.setText("设备2：  " + devid);
                 input2.setVisibility(View.INVISIBLE);
                 b2.setVisibility(View.INVISIBLE);
+                org.zoolu.sip.message.Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+                        SipInfo.user_from, BodyFactory.createListUpdate("addsuccess"));
+                SipInfo.sipUser.sendMessage(query);
                 AlertDialog dialog = new AlertDialog.Builder(saomaActivity.this)
                         .setCancelable(false)
                         .setTitle("绑定设备成功")
@@ -248,6 +260,9 @@ public class saomaActivity extends Activity {
                 t2.setText("设备3：  " + devid);
                 input3.setVisibility(View.INVISIBLE);
                 b3.setVisibility(View.INVISIBLE);
+                org.zoolu.sip.message.Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+                        SipInfo.user_from, BodyFactory.createListUpdate("addsuccess"));
+                SipInfo.sipUser.sendMessage(query);
                 AlertDialog dialog = new AlertDialog.Builder(saomaActivity.this)
                         .setCancelable(false)
                         .setTitle("绑定设备成功")
@@ -299,6 +314,9 @@ public class saomaActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         devid = editText.getText().toString();
+                        String devName = "pad";
+                        SipURL sipURL = new SipURL(devid, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
+                        SipInfo.toDev = new NameAddress(devName, sipURL);
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -399,6 +417,9 @@ public class saomaActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         devid = editText2.getText().toString();
+                        String devName = "pad";
+                        SipURL sipURL = new SipURL(devid, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
+                        SipInfo.toDev = new NameAddress(devName, sipURL);
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -498,6 +519,9 @@ public class saomaActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         devid = editText1.getText().toString();
+                        String devName = "pad";
+                        SipURL sipURL = new SipURL(devid, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
+                        SipInfo.toDev = new NameAddress(devName, sipURL);
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
