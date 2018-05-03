@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/menu_layout">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="77dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/old"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="15dp"
+            android:background="@android:color/transparent"
+            android:padding="3dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_video_normal" />
+
+        <TextView
+            android:id="@+id/old_text"
+            android:layout_width="50dp"
+            android:layout_height="20dp"
+            android:layout_alignStart="@id/old"
+            android:layout_alignEnd="@id/old"
+            android:layout_below="@id/old"
+            android:gravity="center"
+            android:text="@string/old"
+            android:textSize="12sp" />
+
+        <ImageButton
+            android:id="@+id/message"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="15dp"
+            android:layout_toEndOf="@id/old"
+            android:background="@android:color/transparent"
+            android:padding="3dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_message_normal" />
+
+        <TextView
+            android:id="@+id/count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="-20dp"
+            android:layout_marginTop="1dp"
+            android:layout_toEndOf="@+id/message"
+            android:background="@drawable/redrect"
+            android:gravity="center"
+            android:text="4"
+            android:textColor="#ffffff"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/message_text"
+            android:layout_width="50dp"
+            android:layout_height="20dp"
+            android:layout_alignStart="@id/message"
+            android:layout_alignEnd="@id/message"
+            android:layout_below="@id/message"
+            android:gravity="center"
+            android:text="@string/message"
+            android:textSize="12sp" />
+
+
+
+        <ImageButton
+            android:id="@+id/shop"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="15dp"
+
+            android:layout_toEndOf="@id/count"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:padding="3dp"
+            android:src="@drawable/icon_menu_normal"
+            />
+        <TextView
+            android:id="@+id/shop_text"
+            android:layout_width="50dp"
+            android:layout_height="20dp"
+            android:layout_alignEnd="@id/shop"
+            android:layout_alignStart="@id/shop"
+            android:layout_below="@id/shop"
+            android:gravity="center"
+            android:text="@string/shop"
+            android:textSize="12sp" />
+
+        <ImageButton
+            android:id="@+id/person"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="15dp"
+
+            android:layout_toEndOf="@id/shop"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:padding="3dp"
+            android:src="@drawable/icon_menu_normal"
+            />
+        <TextView
+            android:id="@+id/person_text"
+            android:layout_width="50dp"
+            android:layout_height="20dp"
+            android:layout_alignEnd="@id/person"
+            android:layout_alignStart="@id/person"
+            android:layout_below="@id/person"
+            android:gravity="center"
+            android:text="@string/person"
+            android:textSize="12sp" />
+    </RelativeLayout>
+</LinearLayout>

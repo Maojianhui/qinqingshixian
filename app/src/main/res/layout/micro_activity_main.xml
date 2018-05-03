@@ -1,0 +1,27 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <include
+        android:id="@+id/main2" layout="@layout/fragment_title" />
+    <!--<include-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="45dp"-->
+    <!--android:id="@+id/inner" layout="@layout/inner_mirco"/>-->
+
+    <com.app.friendCircleMain.custonListView.CustomListView
+        android:background="@color/white"
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="45dp"
+        android:cacheColorHint="#00000000"
+        android:fadingEdge="none"
+        android:listSelector="#00000000"
+        android:scrollingCache="false"
+        android:animationCache="false"
+        android:smoothScrollbar="true"
+        />
+
+</RelativeLayout>
