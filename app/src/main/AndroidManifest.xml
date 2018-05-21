@@ -73,7 +73,6 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -106,10 +105,10 @@
             android:name=".ui.UpdateNickActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.UploadPicActivity"
+            android:name=".ui.UploadPictureActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".friendcircle.ImageGridUploadpicActivity"
+            android:name=".ui.ImageGridUploadpictureActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.ChangePassword"

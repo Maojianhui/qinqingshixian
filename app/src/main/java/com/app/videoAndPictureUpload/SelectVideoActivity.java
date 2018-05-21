@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.R;
+import com.app.friendCircleMain.adapter.AppApplication;
 import com.app.ftp.Ftp;
 import com.app.ftp.FtpListener;
 import com.app.model.Constant;
@@ -65,10 +66,9 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
         public void onUploadProgress(String currentStep, long uploadSize, File targetFile) {
             if (currentStep.equals(Constant.FTP_UPLOAD_SUCCESS)) {
                 num++;
-                if (num <list .size()) {
+                if (num <list.size()) {
                     dialog.setProgress(num);
                 } else {
-
                     dialog.dismiss();
                     Looper.prepare();
                     Toast.makeText(SelectVideoActivity.this,"上传成功!",Toast.LENGTH_LONG).show();
@@ -128,6 +128,7 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
                 }
                 break;
             case R.id.title_send:
+                list=new ArrayList<String>();
                 Collection<String> c = map.values();
                 Iterator<String> it = c.iterator();
                 for (; it.hasNext();) {
@@ -146,7 +147,7 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
                     @Override
                     public void run() {
                         try {
-                            mFtp=new Ftp(SipInfo.serverIptest,21,"ftpall","123456",upLoad);
+                            mFtp=new Ftp(SipInfo.serverIp,21,"ftpaller","123456",upLoad);
                             mFtp.uploadMultiFile(list,"/"+ SipInfo.paddevId+"pad/video/");
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -181,7 +182,7 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
 
                     bottomListDialog = new BottomListDialog.Builder(activity
                             , bottomListDialogAdapter,
-                            MyApplication.getInstance().getScreenHeight() - actionbar.getHeight() - StatusBarHeightUtil.getStatusBarHeight(context)
+                            AppApplication.getInstance().getScreenHeight() - actionbar.getHeight() - StatusBarHeightUtil.getStatusBarHeight(context)
                     ).setOnItemClickListener(new BottomListDialog.OnItemClickListener() {
                         @Override
                         public void onClick(Dialog dialog, int which) {
@@ -286,7 +287,7 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
 
             helper.setText(R.id.text_duration, hms);
             ImageView simpleDraweeView = AdapterUtils.getAdapterView(helper.getConvertView(), R.id.simpleDraweeView);
-            int width = (MyApplication.getInstance().getScreenWidth() - 4) / 4;
+            int width = (AppApplication.getInstance().getScreenWidth() - 4) / 4;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, width);
             simpleDraweeView.setLayoutParams(layoutParams);
              final ImageView selected = AdapterUtils.getAdapterView(helper.getConvertView(), R.id.isselected);

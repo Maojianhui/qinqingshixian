@@ -48,6 +48,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.app.friendcircle.Bimp.drr;
 
@@ -59,6 +61,8 @@ public class PublishedActivity extends Activity {
     private EditText dongtai;
     private static String response;
 private ProgressDialog dialog;
+    ExecutorService pool;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selectimg);
@@ -68,6 +72,7 @@ private ProgressDialog dialog;
     }
 
     public void Init() {
+         pool= Executors.newFixedThreadPool(1);
         dongtai = (EditText) findViewById(R.id.dongtai);
         noScrollgridview = (GridView) findViewById(R.id.noScrollgridview);
         noScrollgridview.setSelector(new ColorDrawable(Color.TRANSPARENT));
@@ -99,31 +104,32 @@ private ProgressDialog dialog;
                 // 高清的压缩图片全部就在  list 路径里面了
                 // 高清的压缩过的 bmp 对象  都在 Bimp.bmp里面
                 // 完成上传服务器后 .........
-                new Thread() {
-                    @Override
-                    public void run() {
-                        String dongTai = dongtai.getText().toString();
-                        List<String> list = new ArrayList<String>();
-                        for (int i = 0; i < drr.size(); i++) {
-                            String Str = drr.get(i).substring(
-                                    drr.get(i).lastIndexOf("/") + 1,
-                                    drr.get(i).lastIndexOf("."));
-                            list.add(FileUtils.SDPATH + Str + ".JPEG");
-                        }
+                 pool.execute(new Runnable() {
+                     @Override
+                     public void run() {
+                         String dongTai = dongtai.getText().toString();
+                         List<String> list = new ArrayList<String>();
+                         for (int i = 0; i < drr.size(); i++) {
+                             String Str = drr.get(i).substring(
+                                     drr.get(i).lastIndexOf("/") + 1,
+                                     drr.get(i).lastIndexOf("."));
+                             list.add(FileUtils.SDPATH + Str + ".JPEG");
+                         }
 
-                        response = GetPostUtil.uploadFiletiezi(Constant.insertPost, list, Constant.id, dongTai);
-                        Log.w("111........", response);
-                        JSONObject obj = JSON.parseObject(response);
-                        String msg = obj.getString("msg");
-                        Looper.prepare();
-                        if (msg.equals("success")) {
-                            myhandler.sendEmptyMessage(0x111);
-                        } else {
-                            myhandler.sendEmptyMessage(0x222);
-                        }
-                        Looper.loop();
-                    }
-                }.start();
+                         response = GetPostUtil.uploadFiletiezi(Constant.insertPost, list, Constant.id, dongTai);
+                         Log.w("111........", response);
+                         JSONObject obj = JSON.parseObject(response);
+                         String msg = obj.getString("msg");
+                         Looper.prepare();
+                         if (msg.equals("success")) {
+                             myhandler.sendEmptyMessage(0x111);
+                         } else {
+                             myhandler.sendEmptyMessage(0x222);
+                         }
+                         Looper.loop();
+                     }
+                 });
+
             }
         });
     }
@@ -239,7 +245,7 @@ private ProgressDialog dialog;
         };
 
         public void loading() {
-            new Thread(new Runnable() {
+            pool.execute(new Runnable() {
                 public void run() {
                     while (true) {
                         if (Bimp.max == drr.size()) {
@@ -269,7 +275,8 @@ private ProgressDialog dialog;
                         }
                     }
                 }
-            }).start();
+            });
+
         }
     }
 

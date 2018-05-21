@@ -124,7 +124,7 @@ public class SipService extends Service {
             };
 
             try {
-                SipProfile.Builder builder = new SipProfile.Builder(phoneNum, SipInfo.serverIptest);
+                SipProfile.Builder builder = new SipProfile.Builder(phoneNum, SipInfo.serverIp);
                 builder.setPort(5000);
                 SipProfile peerProfile = builder.build();
                 call = manager.makeAudioCall(localSipProfile, peerProfile, listener, 30);
@@ -192,7 +192,7 @@ public class SipService extends Service {
             closeLocalProfile();
         }
         try {
-            SipProfile.Builder builder = new SipProfile.Builder(SipInfo.userPhoneNumber, SipInfo.serverIptest);
+            SipProfile.Builder builder = new SipProfile.Builder(SipInfo.userPhoneNumber, SipInfo.serverIp);
             builder.setPort(5000);
             localSipProfile = builder.build();
             Intent i = new Intent();

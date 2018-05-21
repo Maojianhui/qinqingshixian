@@ -27,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.R;
 import com.app.adapter.MsgAdapter;
 import com.app.audiorecord.AudioRecorderButton;
 import com.app.db.DatabaseInfo;
@@ -42,7 +43,6 @@ import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.sip.SipUser;
 import com.app.tools.MD5Util;
-import com.app.R;
 import com.tb.emoji.Emoji;
 import com.tb.emoji.EmojiUtil;
 import com.tb.emoji.FaceFragment;
@@ -55,6 +55,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -140,7 +142,7 @@ public class ChatActivity extends Activity implements FaceFragment.OnEmojiClickL
     private String address;
     //图片集
     private ArrayList<String> picPaths;
-
+private ExecutorService pool;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,6 +153,7 @@ public class ChatActivity extends Activity implements FaceFragment.OnEmojiClickL
     }
 
     private void init() {
+        pool= Executors.newFixedThreadPool(3);
         //获取当前聊天的好友对象
         currentFriend = (Friend) getIntent().getParcelableExtra("friend");
         //当前好友userid
@@ -257,8 +260,8 @@ public class ChatActivity extends Activity implements FaceFragment.OnEmojiClickL
 
                     }
                 };
-                final Ftp mFtp = new Ftp(SipInfo.serverIptest, 21, "ftpall", "123456", ftpListener);
-                new Thread(new Runnable() {
+                final Ftp mFtp = new Ftp(SipInfo.serverIp, 21, "ftpaller", "123456", ftpListener);
+                pool.execute(new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -266,14 +269,15 @@ public class ChatActivity extends Activity implements FaceFragment.OnEmojiClickL
                         } catch (IOException e) {
                             e.printStackTrace();
                         } finally {
-                            SipURL remote = new SipURL(currentFrienduserId, SipInfo.serverIptest, SipInfo.SERVER_PORT_USER);
+                            SipURL remote = new SipURL(currentFrienduserId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
                             SipInfo.toUser = new NameAddress(currentFriend.getPhoneNum(), remote);
                             SipInfo.sipUser.sendMessage(SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toUser
                                     , SipInfo.user_from, BodyFactory.createFileTransferBody(SipInfo.userId, currentFrienduserId, id,
                                             file.getName(), filetype, "", "/" + SipInfo.userAccount + "/" + file.getName(), (long) seconds, md5, 0)));
                         }
                     }
-                }).start();
+                });
+
                 if (time - DatabaseInfo.sqLiteManager.queryLastTime(SipInfo.userId, currentFrienduserId) > 300) {
                     isTimeShow = 1;
                 } else {
@@ -417,7 +421,7 @@ public class ChatActivity extends Activity implements FaceFragment.OnEmojiClickL
                     final int time = (int) (System.currentTimeMillis() / 1000);
                     final int isTimeShow;
                     final String id = SipInfo.userId + System.currentTimeMillis();
-                    SipURL remote = new SipURL(currentFrienduserId, SipInfo.serverIptest, SipInfo.SERVER_PORT_USER);
+                    SipURL remote = new SipURL(currentFrienduserId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
                     SipInfo.toUser = new NameAddress(currentFriend.getPhoneNum(), remote);
                     Message message = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toUser,
                             SipInfo.user_from, BodyFactory.createMessageBody(id, SipInfo.userId, currentFrienduserId, con, "", 0));
@@ -596,13 +600,13 @@ public class ChatActivity extends Activity implements FaceFragment.OnEmojiClickL
 
                                 }
                             };
-                            Ftp mFtp = new Ftp(SipInfo.serverIptest, 21, "ftpall", "123456", ftpListener);
+                            Ftp mFtp = new Ftp(SipInfo.serverIp, 21, "ftpaller", "123456", ftpListener);
                             try {
                                 mFtp.upload(filePath, ftpPath);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             } finally {
-                                SipURL remote = new SipURL(currentFrienduserId, SipInfo.serverIptest, SipInfo.SERVER_PORT_USER);
+                                SipURL remote = new SipURL(currentFrienduserId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
                                 SipInfo.toUser = new NameAddress(currentFriend.getPhoneNum(), remote);
                                 SipInfo.sipUser.sendMessage(SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toUser
                                         , SipInfo.user_from, BodyFactory.createFileTransferBody(SipInfo.userId, currentFrienduserId, id,
@@ -626,7 +630,7 @@ public class ChatActivity extends Activity implements FaceFragment.OnEmojiClickL
                     final int time = (int) (System.currentTimeMillis() / 1000);
                     final int isTimeShow;
                     final String id = SipInfo.userId + System.currentTimeMillis();
-                    SipURL remote = new SipURL(currentFriend.getUserId(), SipInfo.serverIptest, SipInfo.SERVER_PORT_USER);
+                    SipURL remote = new SipURL(currentFriend.getUserId(), SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
                     SipInfo.toUser = new NameAddress(currentFriend.getPhoneNum(), remote);
                     Message message = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toUser,
                             SipInfo.user_from, BodyFactory.createMessageBody(id, SipInfo.userId, currentFrienduserId, address, "", 2));
@@ -759,15 +763,15 @@ public class ChatActivity extends Activity implements FaceFragment.OnEmojiClickL
 
                                     }
                                 };
-                                Ftp mFtp1 = new Ftp(SipInfo.serverIptest, 21, "ftpall", "123456", ftpListener1);
-                                Ftp mFtp2 = new Ftp(SipInfo.serverIptest, 21, "ftpall", "123456", ftpListener2);
+                                Ftp mFtp1 = new Ftp(SipInfo.serverIp, 21, "ftpaller", "123456", ftpListener1);
+                                Ftp mFtp2 = new Ftp(SipInfo.serverIp, 21, "ftpaller", "123456", ftpListener2);
                                 try {
                                     mFtp1.upload(picPath, ftpPath);
                                     mFtp2.upload(thumbnailPath, thumbnailftpPath);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 } finally {
-                                    SipURL remote = new SipURL(currentFrienduserId, SipInfo.serverIptest, SipInfo.SERVER_PORT_USER);
+                                    SipURL remote = new SipURL(currentFrienduserId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
                                     SipInfo.toUser = new NameAddress(currentFriend.getPhoneNum(), remote);
                                     SipInfo.sipUser.sendMessage(SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toUser
                                             , SipInfo.user_from, BodyFactory.createFileTransferBody(SipInfo.userId, currentFrienduserId, id,
@@ -889,15 +893,15 @@ public class ChatActivity extends Activity implements FaceFragment.OnEmojiClickL
 
                                 }
                             };
-                            Ftp mFtp1 = new Ftp(SipInfo.serverIptest, 21, "ftpall", "123456", ftpListener1);
-                            Ftp mFtp2 = new Ftp(SipInfo.serverIptest, 21, "ftpall", "123456", ftpListener2);
+                            Ftp mFtp1 = new Ftp(SipInfo.serverIp, 21, "ftpaller", "123456", ftpListener1);
+                            Ftp mFtp2 = new Ftp(SipInfo.serverIp, 21, "ftpaller", "123456", ftpListener2);
                             try {
                                 mFtp1.upload(picPath, ftpPath);
                                 mFtp2.upload(thumbnailPath, thumbnailftpPath);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             } finally {
-                                SipURL remote = new SipURL(currentFrienduserId, SipInfo.serverIptest, SipInfo.SERVER_PORT_USER);
+                                SipURL remote = new SipURL(currentFrienduserId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
                                 SipInfo.toUser = new NameAddress(currentFriend.getPhoneNum(), remote);
                                 SipInfo.sipUser.sendMessage(SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toUser
                                         , SipInfo.user_from, BodyFactory.createFileTransferBody(SipInfo.userId, currentFrienduserId, id,
@@ -993,13 +997,13 @@ public class ChatActivity extends Activity implements FaceFragment.OnEmojiClickL
 
                                 }
                             };
-                            Ftp mFtp = new Ftp(SipInfo.serverIptest, 21, "ftpall", "123456", ftpListener);
+                            Ftp mFtp = new Ftp(SipInfo.serverIp, 21, "ftpaller", "123456", ftpListener);
                             try {
                                 mFtp.upload(smallvideopath, ftpPath);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             } finally {
-                                SipURL remote = new SipURL(currentFrienduserId, SipInfo.serverIptest, SipInfo.SERVER_PORT_USER);
+                                SipURL remote = new SipURL(currentFrienduserId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
                                 SipInfo.toUser = new NameAddress(currentFriend.getPhoneNum(), remote);
                                 SipInfo.sipUser.sendMessage(SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toUser
                                         , SipInfo.user_from, BodyFactory.createFileTransferBody(SipInfo.userId, currentFrienduserId, id,
@@ -1215,7 +1219,7 @@ public class ChatActivity extends Activity implements FaceFragment.OnEmojiClickL
 
                         }
                     };
-                    final Ftp mFtp = new Ftp(SipInfo.serverIptest, 21, "ftpall", "123456", ftpListener);
+                    final Ftp mFtp = new Ftp(SipInfo.serverIp, 21, "ftpaller", "123456", ftpListener);
                     try {
                         /**单文件下载*/
                         mFtp.download(filePath, FilePath);

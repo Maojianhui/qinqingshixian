@@ -83,6 +83,7 @@ private CircleImageView iv_avatar;
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_person, container, false);
 
+
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

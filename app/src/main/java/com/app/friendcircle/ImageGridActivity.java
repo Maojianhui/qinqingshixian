@@ -107,7 +107,7 @@ public class ImageGridActivity extends Activity {
 				mHandler);
 		gridView.setAdapter(adapter);
 		adapter.setTextCallback(new TextCallback() {
-			public void onListen(int count) {
+				public void onListen(int count) {
 				bt.setText("完成" + "(" + count + ")");
 			}
 		});

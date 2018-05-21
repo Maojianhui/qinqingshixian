@@ -26,6 +26,8 @@ public class ImageGridAdapter extends BaseAdapter {
 	Activity act;
 	List<ImageItem> dataList;
 	public Map<String, String> map = new HashMap<String, String>();
+
+
 	BitmapCache cache;
 	private Handler mHandler;
 	private int selectTotal = 0;

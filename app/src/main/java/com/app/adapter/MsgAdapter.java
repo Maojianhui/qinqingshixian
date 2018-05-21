@@ -140,6 +140,7 @@ private String avatar;
                 .cacheInMemory(true) // 内存缓存
                 .cacheOnDisk(true) // sdcard缓存
                 .build();//
+
         ImageLoader.getInstance().displayImage(Constant.URL_Avatar+id+"/"+avatar, viewHolder.chatfrom, options);
         ImageLoader.getInstance().displayImage(Constant.URL_Avatar+Constant.id+"/"+Constant.avatar, viewHolder.chatto, options);
         if (msg.getToUserId().equals(SipInfo.userId)) {

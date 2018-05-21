@@ -158,8 +158,8 @@ public class ImageGridUploadpictureActivity extends Activity {
                     @Override
                     public void run() {
                         try {
-                            mFtp=new Ftp(SipInfo.serverIptest,21,"ftpall","123456",upLoad);
-                            mFtp.uploadMultiFile(list,"/"+ SipInfo.paddevId+"pad/");
+                            mFtp=new Ftp(SipInfo.serverIp,21,"ftpaller","123456",upLoad);
+                            mFtp.uploadMultiFile(list,"/"+ SipInfo.paddevId+"pad/camera");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
+import com.app.friendCircleMain.adapter.AppApplication;
+
 
 /**
  * Created by Wxcily on 16/1/5.
@@ -27,8 +29,8 @@ public abstract class DefaultBaseActivity extends BaseActivity {
         super.onBefore();
         this.context = this;
         this.activity = this;
-        screenWidth = MyApplication.getInstance().getScreenWidth();
-        screenHeight = MyApplication.getInstance().getScreenHeight();
+        screenWidth = AppApplication.getInstance().getScreenWidth();
+        screenHeight = AppApplication.getInstance().getScreenHeight();
     }
 
 

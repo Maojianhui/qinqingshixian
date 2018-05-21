@@ -43,7 +43,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             SipInfo.lastCall = SipInfo.sipService.getCall();
             incomingCall = SipInfo.sipService.getManager().takeAudioCall(intent, listener);
             if (SipInfo.lastCall!=null&& SipInfo.lastCall.isInCall()) {
-                incomingCall.endCall();
+                    incomingCall.endCall();
             } else {
                 SipInfo.sipService.setCall(incomingCall);
                 PhoneCall.actionStart(context, incomingCall.getPeerProfile().getUserName(), 2);

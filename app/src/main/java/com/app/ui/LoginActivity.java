@@ -69,6 +69,7 @@ import static com.app.model.Constant.devid1;
 import static com.app.model.Constant.devid2;
 import static com.app.model.Constant.devid3;
 import static com.app.model.Constant.groupid1;
+import static com.app.model.Constant.res;
 import static java.lang.Thread.sleep;
 
 /**
@@ -305,6 +306,7 @@ public class LoginActivity extends Activity implements OnClickListener {
                     Constant.id = user.getString("id");
                     Constant.phone = user.getString("name");
                     Log.e("msg.........", "获取用户数据成功   " + Constant.nick + "    " + avatar);
+                    SipInfo.friends.clear();
                     new Thread(getgroupinfo).start();
                 } else {
                     Looper.prepare();
@@ -363,6 +365,7 @@ public class LoginActivity extends Activity implements OnClickListener {
                     new Thread(getalldevid).start();
 
                 } else {
+                    Constant.res="";
                     LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("avatar",
                             Constant.avatar);
                     LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("nick",
@@ -391,7 +394,7 @@ public class LoginActivity extends Activity implements OnClickListener {
                 UserFromGroup userFromGroup = JSON.parseObject(response, UserFromGroup.class);
 
                 userList = userFromGroup.getUserList();
-                SipInfo.friends.clear();
+
                 for (i = 0; i < userList.size(); i++) {
                     Friend friend = new Friend();
                     friend.setNickName(userList.get(i).getNickname());
@@ -417,7 +420,7 @@ public class LoginActivity extends Activity implements OnClickListener {
         public void run() {
             Constant.res = GetPostUtil.sendGet1111(Constant.URL_getPostList, "id=" + Constant.id + "&currentPage=1" + "&groupid=" + Constant.groupid);
             Log.i("jonsresponse...........", Thread.currentThread().getName() + Constant.res + "");
-            if ((response != null) && !("".equals(response))) {
+            if ((Constant.res != null) && !("".equals(res))) {
                 GroupInfo.groupNum = "7000";
                 //String peer = peerElement.getFirstChild().getNodeValue();
                 GroupInfo.ip = "101.69.255.134";
@@ -478,6 +481,7 @@ public class LoginActivity extends Activity implements OnClickListener {
                 for (int i = 0; i < 3; i++) {
                     if (appdevid[i] != null && !("".equals(appdevid[i]))) {
                         try {
+                            appdevid[i]="310023000100360001";
                             SipInfo.devId = appdevid[i];
                             SipURL local_dev = new SipURL(SipInfo.devId, SipInfo.serverIp, SipInfo.SERVER_PORT_DEV);
                             SipInfo.dev_from = new NameAddress(SipInfo.devId, local_dev);

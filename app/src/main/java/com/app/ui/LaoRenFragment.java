@@ -180,7 +180,7 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
 //		mAdapter = new MyListAdapter(this, listdatas,flag);
         mAdapter = new MyListAdapter(getActivity(), listdatas);
         listview.setAdapter(mAdapter);
-
+listdatas.clear();
         getMicroList(0, true);
 //		new MyTask().execute();
         //下拉刷新
