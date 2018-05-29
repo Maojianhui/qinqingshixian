@@ -41,8 +41,7 @@ import com.app.ui.ShowLocation;
 import com.app.ui.ShowPhoto;
 import com.app.ui.SmallVideoPlay;
 import com.app.view.CircleImageView;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.tb.emoji.EmojiUtil;
 
 import java.io.File;
@@ -134,15 +133,9 @@ private String avatar;
         }
         avatar=Constant.currentfriendavatar;
         id=Constant.currentfriendid;
-        DisplayImageOptions options = new DisplayImageOptions.Builder()//
-                .showImageOnLoading(R.drawable.empty_photo) // 加载中显示的默认图片
-                .showImageOnFail(R.drawable.empty_photo) // 设置加载失败的默认图片
-                .cacheInMemory(true) // 内存缓存
-                .cacheOnDisk(true) // sdcard缓存
-                .build();//
 
-        ImageLoader.getInstance().displayImage(Constant.URL_Avatar+id+"/"+avatar, viewHolder.chatfrom, options);
-        ImageLoader.getInstance().displayImage(Constant.URL_Avatar+Constant.id+"/"+Constant.avatar, viewHolder.chatto, options);
+        Glide.with(mContext).load(Constant.URL_Avatar+id+"/"+avatar).error(R.drawable.empty_photo).into(viewHolder.chatfrom);
+        Glide.with(mContext).load(Constant.URL_Avatar+Constant.id+"/"+Constant.avatar).error(R.drawable.empty_photo).into(viewHolder.chatto);
         if (msg.getToUserId().equals(SipInfo.userId)) {
             // 如果是收到的消息，则显示左边的消息布局，将右边的消息布局隐藏
             viewHolder.leftLayout.setVisibility(View.VISIBLE);

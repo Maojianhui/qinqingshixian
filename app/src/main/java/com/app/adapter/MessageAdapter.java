@@ -14,8 +14,7 @@ import com.app.model.Friend;
 import com.app.model.LastestMsg;
 import com.app.sip.SipInfo;
 import com.app.view.CircleImageView;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bumptech.glide.Glide;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -75,13 +74,12 @@ public class MessageAdapter extends BaseAdapter {
             if (index != -1) {
                 f = SipInfo.friends.get(index);
                 //holder.icon.setImageResource(R.drawable.icon_online);
-                DisplayImageOptions options = new DisplayImageOptions.Builder()//
-                        .showImageOnLoading(R.drawable.empty_photo) // 加载中显示的默认图片
-                        .showImageOnFail(R.drawable.empty_photo) // 设置加载失败的默认图片
-                        .cacheInMemory(true) // 内存缓存
-                        .cacheOnDisk(true) // sdcard缓存
-                        .build();//
-                ImageLoader.getInstance().displayImage(Constant.URL_Avatar+f.getId()+"/"+f.getAvatar(), holder.icon, options);
+
+                Glide.
+                        with(mContext).
+                        load(Constant.URL_Avatar+f.getId()+"/"+f.getAvatar()).
+                        error(R.drawable.empty_photo).
+                        into(holder.icon);
                 holder.name.setText(f.getNickName());
                 holder.lastestMsg.setText(lastestMsg.getLastestmsg());
                 Date date = new Date(lastestMsg.getLastesttime() * 1000L);

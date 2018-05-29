@@ -11,7 +11,6 @@ import android.widget.ImageView;
 
 import com.app.LoadPicture;
 import com.app.R;
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -256,8 +255,8 @@ public abstract class NineGridLayout extends ViewGroup {
 //            }
 //        }
         //showUserAvatar(imageView, url);
-        //displayImage(imageView,url);
-        Glide.with(this.getContext()).load(url).into(imageView);
+        displayImage(imageView,url);
+
     }
 
     private int[] findPosition(int childNum) {

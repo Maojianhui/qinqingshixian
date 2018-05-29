@@ -16,8 +16,7 @@ import com.app.model.Friend;
 import com.app.ui.ChatActivity;
 import com.app.ui.PhoneCall;
 import com.app.view.CircleImageView;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -66,14 +65,9 @@ private String avatar;
         }
       avatar=list.get(position).getAvatar();
         id=list.get(position).getId();
-        DisplayImageOptions options = new DisplayImageOptions.Builder()//
-                .showImageOnLoading(R.drawable.empty_photo) // 加载中显示的默认图片
-                .showImageOnFail(R.drawable.empty_photo) // 设置加载失败的默认图片
-                .cacheInMemory(true) // 内存缓存
-                .cacheOnDisk(true) // sdcard缓存
-                .build();//
-        ImageLoader.getInstance().displayImage(Constant.URL_Avatar+id+"/"+avatar, holder.devIcon, options);
-            holder.check.setVisibility(View.INVISIBLE);
+
+        Glide.with(mContext).load(Constant.URL_Avatar+id+"/"+avatar).error(R.drawable.empty_photo).into(holder.devIcon);
+        holder.check.setVisibility(View.INVISIBLE);
             holder.check.setImageResource(R.drawable.icon_btncall);
 
         holder.devName.setText(list.get(position).getNickName());
