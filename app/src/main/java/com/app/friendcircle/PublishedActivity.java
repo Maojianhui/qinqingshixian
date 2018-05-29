@@ -39,10 +39,10 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.app.R;
+import com.app.http.GetPostUtil;
+import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.tools.ActivityCollector;
-import com.app.utils.GetPostUtil;
-import com.app.utils.ToastUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -115,7 +115,7 @@ private ProgressDialog dialog;
                                      drr.get(i).lastIndexOf("."));
                              list.add(FileUtils.SDPATH + Str + ".JPEG");
                          }
-
+                         
                          response = GetPostUtil.uploadFiletiezi(Constant.insertPost, list, Constant.id, dongTai);
                          Log.w("111........", response);
                          JSONObject obj = JSON.parseObject(response);

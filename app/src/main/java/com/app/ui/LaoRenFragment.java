@@ -34,7 +34,7 @@ import com.app.model.MessageEvent;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.utils.GetPostUtil;
+import com.app.http.GetPostUtil;
 import com.app.video.RtpVideo;
 import com.app.video.SendActivePacket;
 import com.app.video.VideoInfo;

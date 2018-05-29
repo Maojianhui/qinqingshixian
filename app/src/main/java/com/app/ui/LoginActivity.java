@@ -38,6 +38,8 @@ import com.app.groupvoice.GroupInfo;
 import com.app.groupvoice.GroupKeepAlive;
 import com.app.groupvoice.GroupUdpThread;
 import com.app.groupvoice.RtpAudio;
+import com.app.http.GetPostUtil;
+import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.model.Friend;
 import com.app.sip.KeepAlive;
@@ -46,8 +48,6 @@ import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.sip.SipUser;
 import com.app.tools.ActivityCollector;
-import com.app.utils.GetPostUtil;
-import com.app.utils.ToastUtils;
 import com.app.view.CustomProgressDialog;
 import com.app.views.CleanEditText;
 
@@ -291,7 +291,6 @@ public class LoginActivity extends Activity implements OnClickListener {
     private Runnable getuserinfo = new Runnable() {
         @Override
         public void run() {
-
             response = GetPostUtil.sendGet1111(Constant.URL_GetUserInfo, "userid=" + SipInfo.userId);
 //        LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("tiezi",
 //                Constant.res);
@@ -331,15 +330,15 @@ public class LoginActivity extends Activity implements OnClickListener {
             if ((response != null) && !("".equals(response))) {
                 Group group = JSON.parseObject(response, Group.class);
                 groupList = group.getGroupList();
-                groupname[0]=null;
-                groupname[1]=null;
-                groupname[2]=null;
-                groupid[0]=null;
-                groupid[1]=null;
-                groupid[2]=null;
-                appdevid[0]=null;
-                appdevid[1]=null;
-                appdevid[2]=null;
+                groupname[0] = null;
+                groupname[1] = null;
+                groupname[2] = null;
+                groupid[0] = null;
+                groupid[1] = null;
+                groupid[2] = null;
+                appdevid[0] = null;
+                appdevid[1] = null;
+                appdevid[2] = null;
                 for (i = 0; i < groupList.size(); i++) {
                     groupname[i] = groupList.get(i).getGroup_name();
                     groupid[i] = groupList.get(i).getGroupid();
@@ -365,7 +364,7 @@ public class LoginActivity extends Activity implements OnClickListener {
                     new Thread(getalldevid).start();
 
                 } else {
-                    Constant.res="";
+                    Constant.res = "";
                     LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("avatar",
                             Constant.avatar);
                     LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("nick",
@@ -481,7 +480,6 @@ public class LoginActivity extends Activity implements OnClickListener {
                 for (int i = 0; i < 3; i++) {
                     if (appdevid[i] != null && !("".equals(appdevid[i]))) {
                         try {
-                            appdevid[i]="310023000100360001";
                             SipInfo.devId = appdevid[i];
                             SipURL local_dev = new SipURL(SipInfo.devId, SipInfo.serverIp, SipInfo.SERVER_PORT_DEV);
                             SipInfo.dev_from = new NameAddress(SipInfo.devId, local_dev);

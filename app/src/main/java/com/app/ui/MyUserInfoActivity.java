@@ -27,10 +27,10 @@ import com.app.LoadPicture;
 import com.app.LoadPicture.ImageDownloadedCallBack;
 import com.app.LocalUserInfo;
 import com.app.R;
+import com.app.http.GetPostUtil;
+import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.tools.ActivityCollector;
-import com.app.utils.GetPostUtil;
-import com.app.utils.ToastUtils;
 import com.app.view.CircleImageView;
 
 import java.io.File;
@@ -52,7 +52,7 @@ public class MyUserInfoActivity extends Activity {
     private TextView tv_name;
     private ProgressDialog dialog;
     private static String imageName;
-    private String response="";
+    private String response = "";
     private static final int PHOTO_REQUEST_TAKEPHOTO = 1;// 拍照
     private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
     private static final int PHOTO_REQUEST_CUT = 3;// 结果
@@ -130,6 +130,7 @@ public class MyUserInfoActivity extends Activity {
             tv_name.setText("昵称：" + Constant.nick);
         }
     }
+
     private void showPhotoDialog() {
         final AlertDialog dlg = new AlertDialog.Builder(this).create();
         dlg.show();
@@ -260,7 +261,7 @@ public class MyUserInfoActivity extends Activity {
 
 
     private void showUserAvatar(ImageView iamgeView, String avatar) {
-        final String url_avatar = Constant.URL_Avatar +id+ "/"+avatar;
+        final String url_avatar = Constant.URL_Avatar + id + "/" + avatar;
         iamgeView.setTag(url_avatar);
         if (avatar != null && !avatar.equals("")) {
             Bitmap bitmap = avatarLoader.loadImage(iamgeView, url_avatar,
@@ -307,8 +308,23 @@ public class MyUserInfoActivity extends Activity {
         new Thread() {
             @Override
             public void run() {
+                //httpurlconnection简单封装版
                 response = GetPostUtil.uploadFile(Constant.URL_UPDATE_Avatar, avaPath + imageName, id,
                         LocalUserInfo.getInstance(MyUserInfoActivity.this).getUserInfo("avatar"));
+
+                 /*okhttp的封装可以有选择的使用
+                 try {
+                 response= OkHttpUtils.post().addFile("pic",imageName,new File(avaPath + imageName)).
+                 addParams("id",id).
+                 addParams("avatar",LocalUserInfo.getInstance(MyUserInfoActivity.this).getUserInfo("avatar")).
+                 url(Constant.URL_UPDATE_Avatar).
+                 build().
+                 execute().body().string();
+                 } catch (IOException e) {
+                 e.printStackTrace();
+                 }*/
+
+
                 Log.i("jonsresponse", response);
                 JSONObject obj = JSON.parseObject(response);
                 String msg = obj.getString("msg");

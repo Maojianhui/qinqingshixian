@@ -26,7 +26,6 @@ import com.app.model.Msg;
 import com.app.model.MyFile;
 import com.app.service.BinderPoolService;
 import com.app.service.NewsService;
-import com.app.service.SipService;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
@@ -142,7 +141,7 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
         sipUser.setLoginNotifyListener(this);
         sipUser.setBottomListener(this);
         //启动语音电话服务
-        startService(new Intent(Main.this, SipService.class));
+        //startService(new Intent(Main.this, SipService.class));
         //启动监听服务
         startService(new Intent(this, NewsService.class));
         //启动aidl接口服务
@@ -157,7 +156,7 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
                             SipInfo.dev_from, BodyFactory.createLogoutBody()));
                 }
                 //关闭语音电话服务
-                stopService(new Intent(Main.this, SipService.class));
+                //stopService(new Intent(Main.this, SipService.class));
                 //关闭监听服务
                 stopService(new Intent(Main.this, NewsService.class));
                 //关闭PTT监听服务
@@ -267,7 +266,7 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
         SipInfo.devLogined = false;
         SipInfo.loginReplace = null;
         //停止语音电话服务
-        stopService(new Intent(Main.this, SipService.class));
+        //stopService(new Intent(Main.this, SipService.class));
         //关闭监听服务
         stopService(new Intent(Main.this, NewsService.class));
         //停止PPT监听服务

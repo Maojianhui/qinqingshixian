@@ -299,8 +299,7 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
                 selected.setImageResource(-1);
                 textView.setBackgroundColor(0x00000000);
             }
-            Glide
-                    .with(context)
+            Glide.with(context)
                     .load(Uri.fromFile(new File(item.getPath())))
                     .asBitmap()
                     .into(simpleDraweeView);

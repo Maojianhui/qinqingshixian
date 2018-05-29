@@ -29,8 +29,8 @@ import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.tools.ActivityCollector;
-import com.app.utils.GetPostUtil;
-import com.app.utils.ToastUtils;
+import com.app.http.GetPostUtil;
+import com.app.http.ToastUtils;
 import com.app.view.CustomProgressDialog;
 import com.app.zxing.android.CaptureActivity;
 

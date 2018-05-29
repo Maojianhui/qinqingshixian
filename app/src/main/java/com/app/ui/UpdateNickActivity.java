@@ -21,8 +21,8 @@ import com.app.R;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
 import com.app.tools.ActivityCollector;
-import com.app.utils.GetPostUtil;
-import com.app.utils.ToastUtils;
+import com.app.http.GetPostUtil;
+import com.app.http.ToastUtils;
 
 
 public class UpdateNickActivity extends Activity {
