@@ -8,7 +8,7 @@ import android.os.PowerManager;
 public class GroupInfo {
     public static String groupNum;
     public static String ip;
-    public static int port=7000;
+    public static int port;
     public static String level;
     public static boolean isSpeak;
     public static RtpAudio rtpAudio;

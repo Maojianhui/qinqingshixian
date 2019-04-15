@@ -3,9 +3,14 @@
     <color name="common_top_bar_blue">#22292c</color>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-
+    <color name="colorAccent">#f2c306</color>
+    <color name="newbackground">#ffd340</color>
+    <color name="newbackground1">#f8f8fa</color>
+    <color name="titile">#FF9900</color>
     <color name="select">#888888</color>
+    <color name="reset">#474646</color>
+    <color name="reset1">#ffd340</color>
+    <color name="set">#dddddd</color>
     <color name="main_menu_bg">#aa111213</color>
     <color name="common_title_bg">#aa111213</color>
     <color name="primary_title_text_color">#ff888888</color>
@@ -13,6 +18,7 @@
     <color name="common_text_yellow">#ffffe049</color>
     <color name="album_item_bg">#fffcfcfd</color>
     <color name="video_playter_bg">#333333</color>
+    <color name="image_bar">#f3b337</color>
 
     <color name="contents_text">#ff000000</color>
     <color name="encode_view">#ffffffff</color>
@@ -26,6 +32,7 @@
     <color name="viewfinder_laser">#ffcc0000</color> <!-- Android standard ICS color -->
     <color name="viewfinder_mask">#60000000</color>
 
+    <color name="address_background">#f6d2d1</color>
 
     <color name="title_background">#3BAFDA</color>
     <color name="white">#ffffff</color>

@@ -11,5 +11,11 @@
         android:layout_width="360dp"
         android:layout_height="480dp"
         />
+    <Button
+        android:id="@+id/bt_qiehuan"
+        android:layout_width="30dp"
+        android:layout_height="20dp"
+        android:text="qh"
+        android:visibility="gone"/>
 
 </LinearLayout>

@@ -24,6 +24,8 @@
 package org.zoolu.sip.provider;
 
 
+import android.app.Activity;
+
 import org.zoolu.net.IpAddress;
 import org.zoolu.sip.address.SipURL;
 import org.zoolu.sip.header.ViaHeader;
@@ -89,7 +91,7 @@ import java.util.Vector;
   * Note: no 482 (Loop Detected) nor 501 (Not Implemented) responses are generated for requests
   * that does not properly match any active transactions, dialogs, nor method types.
   */
-public class SipProvider implements Configurable, TransportListener
+public class SipProvider  implements Configurable, TransportListener
 {
 
    // **************************** Constants ****************************

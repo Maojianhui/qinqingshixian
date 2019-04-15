@@ -25,6 +25,7 @@ import com.app.video.VideoInfo;
 import org.greenrobot.eventbus.EventBus;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.zoolu.sip.address.NameAddress;
@@ -36,6 +37,9 @@ import org.zoolu.sip.provider.TransportConnId;
 
 import java.io.File;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -43,6 +47,8 @@ import java.util.concurrent.Executors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
+
 
 /**
  * Author chzjy
@@ -68,6 +74,9 @@ public class SipUser extends SipProvider {
     private BottomListener bottomListener;
     //app图标路径
     private String sdPath;
+    private ClusterNotifyListener clusterNotifyListener;
+
+//    private QinliaoUpdateListener qinliaoUpdateListener;
 
 
 
@@ -240,37 +249,96 @@ public class SipUser extends SipProvider {
                             }
                             return true;
                         }
-                    case "user_notify":
-//                        Element userloginElement = (Element) root.getElementsByTagName("login").item(0);
-//                        Element useridElement = (Element) userloginElement.getElementsByTagName("userid").item(0);
-//                        Element liveElement = (Element) userloginElement.getElementsByTagName("live").item(0);
-//                        String userid = useridElement.getFirstChild().getNodeValue();
-//                        if (!userid.equals(SipInfo.userId)) {
-//                            Friend friend = new Friend();
-//                            friend.setUserId(userid);
-//                            int index = SipInfo.friends.indexOf(friend);
-//                            int index2 = -1;
-//                            if (index != -1) {
-//                                if (liveElement.getFirstChild().getNodeValue().equals("True")) {
-//                                    SipInfo.friends.get(index).setLive(true);
-//                                } else {
-//                                    SipInfo.friends.get(index).setLive(false);
+
+
+
+
+                        //亲聊新成员上线
+                    case"user_online":
+                        Element liveElement=(Element)root.getElementsByTagName("live").item(0);
+                        String islive=liveElement.getFirstChild().getNodeValue();
+                        if(islive.equals("True")){
+                            NodeList users=root.getElementsByTagName("login");
+                            list.clear();
+                            for (int i = 0; i < users.getLength(); i++) {
+                                Log.i(TAG, "111");
+//                                Cluster cluster = new Cluster();
+                                Element logi1Element = (Element) users.item(i);
+                                Element userid1Element = (Element) logi1Element.getElementsByTagName("userid").item(0);
+                                list.add(userid1Element.getFirstChild().getNodeValue());
+                                Log.i(TAG, "qinliao" + list.get(i));
+                            }
+                            qinliaoUpdateListener.stausOnUpdate();
+                        }else
+                            if(islive.equals("False")) {
+                                NodeList users = root.getElementsByTagName("login");
+                                list.clear();
+                                for (int i = 0; i < users.getLength(); i++) {
+                                    Log.i(TAG, "111");
+//                                Cluster cluster = new Cluster();
+                                    Element logi1Element = (Element) users.item(i);
+                                    Element userid1Element = (Element) logi1Element.getElementsByTagName("userid").item(0);
+                                    list.add(userid1Element.getFirstChild().getNodeValue());
+                                    Log.i(TAG, "qinliao" + list.get(i));
+                                }
+                                qinliaoUpdateListener.stausOffUpdate();
+                            }
+
+
+                        break;
+
+
+
+                  //服务器回复亲聊在线成员userid
+                    case "cluster_users":
+                            Log.i("qqq","111");
+                            NodeList  clusters = root.getElementsByTagName("cluster_user");
+                            Log.d(TAG, "requestParse111: " + clusters.getLength());
+                            list.clear();
+                            for (int i = 0; i < clusters.getLength(); i++) {
+                                Log.i(TAG, "111");
+//                                Cluster cluster = new Cluster();
+                                Element clusterElement = (Element) clusters.item(i);
+                                Element nameElement = (Element) clusterElement.getElementsByTagName("name").item(0);
+                                list.add(nameElement.getFirstChild().getNodeValue());
+                                Log.i(TAG, "qinliao" + list.get(i));
+                            }
+                            list.add(SipInfo.userId);
+//                                if (nameElement.getFirstChild().getNodeValue().equals("超级用户")||nameElement.getFirstChild().getNodeValue().equals("None")) {
+//                                    continue;
 //                                }
-//                                index2 = SipInfo.friendList.get(SipInfo.friends.get(index).getUnit()).indexOf(friend);
+////                                cluster.setName(nameElement.getFirstChild().getNodeValue());
+////                                SipInfo.cacheClusters.add(cluster);
+////                                Log.d(TAG, "requestParse: " + "添加完毕" + SipInfo.cacheClusters.size());
 //                            }
-//                            if (index2 != -1) {
-//                                if (liveElement.getFirstChild().getNodeValue().equals("True")) {
-//                                    SipInfo.friendList.get(SipInfo.friends.get(index).getUnit()).get(index2).setLive(true);
-//                                } else {
-//                                    SipInfo.friendList.get(SipInfo.friends.get(index).getUnit()).get(index2).setLive(false);
+
+//                            Element f = (Element) root.getElementsByTagName("finish").item(0);
+//                            int isfinish = Integer.parseInt(f.getFirstChild().getNodeValue());
+//                            if (isfinish == 1) {
+//                                if (clusterNotifyListener != null ) {
+//                                    SipInfo.finish = true;
+////                                    Collections.sort(SipInfo.cacheClusters);
+//                                    Log.d(TAG, "requestParse: " + "更新");
+//                                    clusterNotifyListener.onNotify();
+//                                    SipInfo.sipUser.sendMessage(SipMessageFactory.createResponse(msg, 200, "OK", ""));
+//                                }else{
+////                                    SipInfo.cacheClusters.clear();
+////                                    org.zoolu.sip.message.Message query_channel = SipMessageFactory.createNotifyRequest(
+////                                            SipInfo.sipUser, SipInfo.user_to, SipInfo.user_from, BodyFactory.createQueryClusterIdBody(SipInfo.userId));
+////                                    SipInfo.sipUser.sendMessage(query_channel);
 //                                }
-//                            }
-//                            if (loginNotifyListener != null) {
-//                                loginNotifyListener.onUserNotify();
-//                            }
-//                        }
-                        return true;
+//                            } else {
+//                                SipInfo.finish = false;
+//                                SipInfo.sipUser.sendMessage(SipMessageFactory.createResponse(msg, 200, "OK", ""));
+
+////                            return true;
+
+                        qinliaoUpdateListener.stausOnUpdate();
+                        break;
+
+
                     case "alarm":{
+                        Log.i("maomaomao","111");
                         Element useridElement = (Element) root.getElementsByTagName("userId").item(0);
 
                         final String userid = useridElement.getFirstChild().getNodeValue();
@@ -281,6 +349,10 @@ public class SipUser extends SipProvider {
                         EventBus.getDefault().post(new MessageEvent("警报"));
                         music = MediaPlayer.create(context, R.raw.alarm);
                         music.start();
+                        return true;
+
+
+
                     }
                     case "message": {
                         Element idElement = (Element) root.getElementsByTagName("id").item(0);
@@ -567,12 +639,21 @@ public class SipUser extends SipProvider {
                             SipInfo.salt = saltElement.getFirstChild().getNodeValue();
                             Log.i(TAG, "收到用户注册第一步响应");
                             SHA1 sha1 = SHA1.getInstance();
-                            String password = sha1.hashData(SipInfo.salt + SipInfo.passWord);
-                            password = sha1.hashData(SipInfo.seed + password);
-                            Message register = SipMessageFactory.createRegisterRequest(
-                                    SipInfo.sipUser, SipInfo.user_to, SipInfo.user_from,
-                                    BodyFactory.createRegisterBody(password));
-                            SipInfo.sipUser.sendMessage(register);
+                            if((SipInfo.passWord==null)||(SipInfo.passWord.equals(""))){
+                                Message register = SipMessageFactory.createRegisterRequest(
+                                        SipInfo.sipUser, SipInfo.user_to, SipInfo.user_from,
+                                        BodyFactory.createRegisterBody("pass"));
+                                SipInfo.sipUser.sendMessage(register);
+                            }else {
+                                String password = sha1.hashData(SipInfo.salt + SipInfo.passWord);
+                                password = sha1.hashData(SipInfo.seed + password);
+                                Message register = SipMessageFactory.createRegisterRequest(
+                                        SipInfo.sipUser, SipInfo.user_to, SipInfo.user_from,
+                                        BodyFactory.createRegisterBody(password));
+                                SipInfo.sipUser.sendMessage(register);
+                            }
+
+
                         } else {
                             Log.e(TAG, "掉线");
                             SipInfo.userLogined = false;
@@ -606,6 +687,24 @@ public class SipUser extends SipProvider {
 
                         }
                         return true;
+                    case "group_bind_code":
+                        codeElement = (Element) root.getElementsByTagName("code").item(0);
+                        code = codeElement.getFirstChild().getNodeValue();
+                        if (code.equals("200")) {
+//                            Element idElement = (Element) root.getElementsByTagName("padduserid").item(0);
+//                            SipInfo.paduserid = idElement.getFirstChild().getNodeValue();
+//                            Element portElement=(Element)root.getElementsByTagName("cluster_id").item(0);
+//                            GroupInfo.port=Integer.parseInt(portElement.getFirstChild().getNodeValue())-1+7000;
+                            Log.i(TAG, "用户总数：" + SipInfo.friendCount);
+                        }
+                    case "port_get":
+                        Element portElement = (Element) root.getElementsByTagName("port").item(0);
+                        String port= portElement.getFirstChild().getNodeValue();
+                        GroupInfo.port=Integer.parseInt(port);
+                        Log.d(TAG,"亲聊端口号为"+GroupInfo.port);
+                        break;
+
+
                     case "friends_query":
                         codeElement = (Element) root.getElementsByTagName("code").item(0);
                         code = codeElement.getFirstChild().getNodeValue();
@@ -757,6 +856,12 @@ public class SipUser extends SipProvider {
                             }
                         }
                         SipInfo.inviteResponse = true;
+                         /*
+                        VideoInfo.media_info_ip = VideoInfo.rtpIp;
+                        VideoInfo.media_info_port = VideoInfo.rtpPort;
+                        VideoInfo.media_info_magic = VideoInfo.magic;
+                        */
+
                         return true;
                 }
             } catch (Exception e) {
@@ -787,6 +892,7 @@ public class SipUser extends SipProvider {
     public interface ChangePWDListener {
         void onChangePWD(int i);
     }
+
 
     public void setMessageListener(MessageListener messageListener) {
         this.messageListener = messageListener;
@@ -830,6 +936,24 @@ public class SipUser extends SipProvider {
     };
     public void setMonitor(StopMonitor monitor){
         this.monitor = monitor;
+    }
+
+//    public static String[] qinliaouserid=new String[8];
+    public static List<String> list=new ArrayList<>();
+
+    public interface ClusterNotifyListener{
+        void onNotify();
+    }
+    public interface QinliaoUpdateListener{
+        void stausOnUpdate();
+        void stausOffUpdate();
+    }
+    public QinliaoUpdateListener qinliaoUpdateListener;
+
+
+
+    public void setQinliaoUpdateListener(QinliaoUpdateListener qinliaoUpdateListener){
+        this.qinliaoUpdateListener=qinliaoUpdateListener;
     }
 
 }

@@ -11,7 +11,7 @@ public class NalBuffer {
     private int nalLen;
 
     public NalBuffer() {
-        nalBuf = new byte[100000];
+        nalBuf = new byte[200000];
         isReadable = false;
         isWriteable = true;
         nalLen = 0;
@@ -44,6 +44,10 @@ public class NalBuffer {
         notify();
     }
 
+    public synchronized byte[] getWriteable_Nalbuf() {
+        return this.nalBuf;
+    }
+
     public void isWriteable() {
         if (!isWriteable) {
             try {
@@ -67,9 +71,17 @@ public class NalBuffer {
     }
 
     public synchronized void cleanNalBuf() {
-        nalBuf = new byte[100000];
+        nalBuf = new byte[200000];
         isReadable = false;
         isWriteable = true;
         nalLen = 0;
     }
+
+    public synchronized void setNalLen(int NalLen) {
+        this.nalLen = NalLen;
+    }
+
+    public int getNalLen(){return this.nalLen;}
+
+    public synchronized void addNalLen(int Len){this.nalLen+=Len;};
 }

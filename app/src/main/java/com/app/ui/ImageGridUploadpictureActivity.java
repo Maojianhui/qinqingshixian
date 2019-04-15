@@ -51,6 +51,7 @@ public class ImageGridUploadpictureActivity extends Activity {
     Button bt;
     TextView t1;
     private ArrayList<String> list;
+    public static String serverIp = "101.69.255.132";
     private FtpListener upLoad=new FtpListener() {
         @Override
         public void onStateChange(String currentStep) {
@@ -64,7 +65,6 @@ public class ImageGridUploadpictureActivity extends Activity {
                 if (num <list .size()) {
                     dialog.setProgress(num);
                 } else {
-
                     dialog.dismiss();
                     Looper.prepare();
                     Toast.makeText(ImageGridUploadpictureActivity.this,"上传成功!",Toast.LENGTH_LONG).show();
@@ -158,7 +158,8 @@ public class ImageGridUploadpictureActivity extends Activity {
                     @Override
                     public void run() {
                         try {
-                            mFtp=new Ftp(SipInfo.serverIp,21,"ftpaller","123456",upLoad);
+//                            mFtp=new Ftp(SipInfo.serverIp,21,"ftpaller","123456",upLoad);
+                            mFtp=new Ftp(serverIp,21,"ftpall","123456",upLoad);
                             mFtp.uploadMultiFile(list,"/"+ SipInfo.paddevId+"pad/camera");
                         } catch (IOException e) {
                             e.printStackTrace();

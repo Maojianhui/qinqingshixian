@@ -1,22 +1,30 @@
 package com.app.friendcircle;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,6 +32,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -42,7 +52,12 @@ import com.app.R;
 import com.app.http.GetPostUtil;
 import com.app.http.ToastUtils;
 import com.app.model.Constant;
+import com.app.model.MessageEvent;
 import com.app.tools.ActivityCollector;
+import com.app.ui.MyUserInfoActivity;
+import com.app.utils.ProviderUtil;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +75,7 @@ public class PublishedActivity extends Activity {
     private TextView activity_selectimg_send;
     private EditText dongtai;
     private static String response;
-private ProgressDialog dialog;
+    private ProgressDialog dialog;
     ExecutorService pool;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +83,32 @@ private ProgressDialog dialog;
         setContentView(R.layout.activity_selectimg);
         ActivityCollector.addActivity(this);
         Init();
+        /*设置系统状态栏颜色
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(getResources().getColor(R.color.image_bar));
+        }
+        */
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION  //该参数指布局能延伸到navigationbar，我们场景中不应加这个参数
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+            window.setNavigationBarColor(Color.TRANSPARENT); //设置navigationbar颜色为透明
+        }
+        int color = getResources().getColor(R.color.reset1);
+        Window window = getWindow();
+        //如果系统5.0以上
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(color);
+        }
+
 
     }
 
@@ -95,12 +136,7 @@ private ProgressDialog dialog;
         });
         activity_selectimg_send = (TextView) findViewById(R.id.activity_selectimg_send);
         activity_selectimg_send.setOnClickListener(new OnClickListener() {
-
             public void onClick(View v) {
-                dialog = new ProgressDialog(PublishedActivity.this);
-                dialog.setMessage("正在上传...");
-                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                dialog.show();
                 // 高清的压缩图片全部就在  list 路径里面了
                 // 高清的压缩过的 bmp 对象  都在 Bimp.bmp里面
                 // 完成上传服务器后 .........
@@ -115,18 +151,28 @@ private ProgressDialog dialog;
                                      drr.get(i).lastIndexOf("."));
                              list.add(FileUtils.SDPATH + Str + ".JPEG");
                          }
-                         
-                         response = GetPostUtil.uploadFiletiezi(Constant.insertPost, list, Constant.id, dongTai);
-                         Log.w("111........", response);
-                         JSONObject obj = JSON.parseObject(response);
-                         String msg = obj.getString("msg");
-                         Looper.prepare();
-                         if (msg.equals("success")) {
-                             myhandler.sendEmptyMessage(0x111);
-                         } else {
-                             myhandler.sendEmptyMessage(0x222);
+                         if((drr.size()==0)& TextUtils.isEmpty(dongTai)){
+                             Looper.prepare();
+                             myhandler.sendEmptyMessage(0x333);
+                         }else{
+                             Looper.prepare();
+                             dialog = new ProgressDialog(PublishedActivity.this);
+                             dialog.setMessage("正在上传...");
+                             dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                             dialog.show();
+                             response = GetPostUtil.uploadFiletiezi(Constant.insertPost, list, Constant.id, dongTai);
+                             Log.w("111........", response);
+                             JSONObject obj = JSON.parseObject(response);
+                             String msg = obj.getString("msg");
+
+                             if (msg.equals("success")) {
+                                 myhandler.sendEmptyMessage(0x111);
+                             } else {
+                                 myhandler.sendEmptyMessage(0x222);
+                             }
                          }
-                         Looper.loop();
+                             Looper.loop();
+
                      }
                  });
 
@@ -140,16 +186,24 @@ private ProgressDialog dialog;
             super.handleMessage(msg);
             if (msg.what == 0x111) {
                 ToastUtils.showShort(PublishedActivity.this, "状态上传成功");
+                EventBus.getDefault().post(new MessageEvent("刷新"));
                 Bimp.bmp.clear();
                 Bimp.drr.clear();
                 Bimp.max = 0;
                 FileUtils.deleteDir();
                 dialog.dismiss();
-                ActivityCollector.finishToMain();
+                ActivityCollector.removeActivity(PublishedActivity.this);
+                finish();
+
+//                ActivityCollector.finishToMain();
+//                ActivityCollector.finishToFirstView();
             } else if (msg.what == 0x222) {
                 ToastUtils.showShort(PublishedActivity.this, "状态上传失败请重试");
                 dialog.dismiss();
                 return;
+            }
+            else if(msg.what==0x333){
+                ToastUtils.showShort(PublishedActivity.this,"发送的内容不能为空");
             }
         }
     };
@@ -325,7 +379,13 @@ private ProgressDialog dialog;
                     .findViewById(R.id.item_popupwindows_cancel);
             bt1.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    photo();
+                    if (ContextCompat.checkSelfPermission(PublishedActivity.this, Manifest.permission.CAMERA)
+                            !=PackageManager.PERMISSION_GRANTED){
+                        ActivityCompat.requestPermissions(PublishedActivity.this,new String[]
+                                {Manifest.permission.CAMERA},1001);
+                    }else{
+                        photo();
+                    }
                     dismiss();
                 }
             });
@@ -355,8 +415,22 @@ private ProgressDialog dialog;
                 + "/fanxin/Files/Camera/Image/", String.valueOf(System.currentTimeMillis())
                 + ".jpg");
         path = file.getPath();
-        Uri imageUri = Uri.fromFile(file);
+        Uri imageUri;
+        if(Build.VERSION.SDK_INT<= Build.VERSION_CODES.M){
+            imageUri = Uri.fromFile(file);
+        }else{
+            imageUri= FileProvider.getUriForFile(this, ProviderUtil.getFileProviderName(this),file);
+//            openCameraIntent.setDataAndType(imageUri,"application/vnd.android.package-archive");
+//            List<ResolveInfo> resolveInfoList=this.getPackageManager().
+//                    queryIntentActivities(openCameraIntent, PackageManager.MATCH_DEFAULT_ONLY);
+//            for (ResolveInfo resolveInfo : resolveInfoList) {
+//                String packageName = resolveInfo.activityInfo.packageName;
+//                this.grantUriPermission(packageName, imageUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//            }
+        }
+
         openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        openCameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(openCameraIntent, TAKE_PICTURE);
     }
 

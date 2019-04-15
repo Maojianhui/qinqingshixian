@@ -1,4 +1,4 @@
-package com.app.ui;
+package com.app.ui.fragment;
 
 
 import android.os.Bundle;

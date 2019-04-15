@@ -52,6 +52,10 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- 打电话权限 -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <!-- 锁屏功能权限 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".friendCircleMain.adapter.AppApplication"
@@ -68,24 +72,61 @@
 
         <service android:name="com.amap.api.location.APSService" />
 
+        <provider
+            android:name=".ui.MyFileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.alex.demo.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <receiver
+            android:name=".receiver.VideoConnextReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.broadcast.CALL_REQUEST" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".receiver.VideoStartReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.broadcast.CALL_AGREE" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".ui.VideoDial"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".ui.VideoStart"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.LoginActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.HOME" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.Main"
             android:screenOrientation="portrait" />
         <activity
             android:name=".friendCircleMain.adapter.ImagePagerActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".videoAndPictureUpload.SelectVideoActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".videoAndPictureUpload.SelectVideoActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".friendcircle.PublishedActivity"
             android:screenOrientation="portrait" />
@@ -150,6 +191,12 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.ServiceCallSet"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.VideoConnect"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.VideoLook"
             android:screenOrientation="portrait" />
         <activity
@@ -171,11 +218,16 @@
             android:name=".zxing.android.CaptureActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.SignUpActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".ui.VideoCallActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".video.H264Sending"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.addressAddActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.FriendCallActivity"
             android:screenOrientation="portrait" />
 
         <receiver android:name=".receiver.MyReceiver" />
@@ -203,8 +255,44 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.saomaActivity" />
-        <activity android:name=".ui.friendActivity"></activity>
+        <activity android:name=".ui.friendActivity" />
+        <activity
+            android:name=".ui.SoftwareIntruct"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.Setting" />
+        <activity android:name=".ui.MessageNotify" />
+        <activity android:name=".ui.NumberBind" />
+        <activity android:name=".ui.DevBindSuccess" />
+        <activity android:name=".ui.SaomaActivity" />
+        <activity android:name=".ui.StatusBarUtils" />
+        <activity android:name=".ui.SignUpActivity" />
+        <activity android:name=".ui.ChangePassword1" />
+        <activity android:name=".ui.VerificodeLogin" />
+        <activity android:name=".ui.SetNewPassword" />
+        <activity android:name=".ui.FamilyCircle" />
+        <activity android:name=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.ShopActivity" />
+        <activity android:name=".ui.AddressManage" />
+        <activity android:name=".ui.AddNewAddress" />
+        <activity android:name=".ui.CommunityActivity" />
+        <activity android:name=".ui.MyCouponActivity" />
+        <!--<activity android:name=".ui.ApplicationActivity" />-->
+        <!--<activity android:name=".ui.application.ElemeActivity" />-->
+        <!--<activity android:name=".ui.application.MeituanActivity" />-->
+        <!--<activity android:name=".ui.application.PetActivity" />-->
+        <!--<activity android:name=".ui.application.Daojia58Activity" />-->
+        <!--<activity android:name=".ui.application.XdfActivity" />-->
+        <!--<activity android:name=".ui.application.AqyActivity" />-->
+        <activity android:name=".ui.Address.UserAddress" />
+        <activity android:name=".ui.Address.AddressSupervise"></activity>
     </application>
 
 </manifest>

@@ -82,6 +82,7 @@ public class GroupUdpThread extends Thread {
     public void sendMsg(byte[] msg) {
         Log.i(TAG, "send:" + new String(msg));
         outPacket = new DatagramPacket(msg, msg.length, inetAddress, port);
+        Log.i(TAG, "sendmessage"+port+inetAddress);
         new Thread() {
             @Override
             public void run() {

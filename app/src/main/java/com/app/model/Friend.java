@@ -9,6 +9,7 @@ import android.os.Parcelable;
  */
 
 public class Friend implements Comparable<Friend>, Parcelable {
+    private boolean online=false;
     private String avatar;
     private String id;
     private String userId;
@@ -69,6 +70,8 @@ public class Friend implements Comparable<Friend>, Parcelable {
         }
     }
 
+    public boolean getStaus(){return online;};
+    public void setStaus(boolean staus){this.online=staus;}
     public String getSortLetters() {
         return sortLetters;
     }

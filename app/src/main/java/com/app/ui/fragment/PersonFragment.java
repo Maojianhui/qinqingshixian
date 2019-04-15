@@ -1,12 +1,13 @@
-package com.app.ui;
+package com.app.ui.fragment;
 
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -14,12 +15,17 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.TextPaint;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,13 +37,19 @@ import com.app.LocalUserInfo;
 import com.app.R;
 import com.app.ftp.Ftp;
 import com.app.ftp.FtpListener;
-import com.app.groupvoice.GroupInfo;
+import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.tools.ActivityCollector;
 import com.app.tools.VersionXmlParse;
+import com.app.ui.FamilyCircle;
+import com.app.ui.MyCouponActivity;
+import com.app.ui.SaomaActivity;
+import com.app.ui.ServiceCallSet;
+import com.app.ui.Setting;
+import com.app.ui.UploadPictureActivity;
 import com.app.videoAndPictureUpload.SelectVideoActivity;
 import com.app.view.CircleImageView;
 import com.app.view.CustomProgressDialog;
@@ -48,10 +60,14 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 import static com.app.camera.FileOperateUtil.TAG;
-import static com.app.model.Constant.groupid1;
 import static com.app.sip.SipInfo.sipUser;
 
 public class PersonFragment extends Fragment implements View.OnClickListener{
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE };
+
 private CircleImageView iv_avatar;
     private TextView tv_name;
     TextView tv_fxid;
@@ -83,7 +99,6 @@ private CircleImageView iv_avatar;
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_person, container, false);
 
-
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -92,6 +107,8 @@ private CircleImageView iv_avatar;
                 R.id.main1);
         title=(TextView)lay.findViewById(R.id.title);
         title.setText("个人中心");
+        TextPaint tp=title.getPaint();
+        tp.setFakeBoldText(true);
         SdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
         apkPath = SdCard + "/fanxin/download/apk/";
         avaPath = SdCard + "/fanxin/Files/Camera/Image/";
@@ -103,7 +120,7 @@ private CircleImageView iv_avatar;
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getActivity(),
-                        MyUserInfoActivity.class));
+                        FamilyCircle.class));
             }
 
         });
@@ -113,98 +130,159 @@ private CircleImageView iv_avatar;
         avatar = LocalUserInfo.getInstance(getActivity()).getUserInfo("avatar");
         tv_name.setText("昵称: " + Constant.nick);
         tv_fxid.setText("手机号：" + Constant.phone);
+        try {
             showUserAvatar(iv_avatar, avatar);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         RelativeLayout re_xaingce = (RelativeLayout) getView().findViewById(
                 R.id.re_xiangce);
         RelativeLayout re_addev = (RelativeLayout) getView().findViewById(
                 R.id.re_adddev);
-        RelativeLayout re_psd = (RelativeLayout) getView().findViewById(
-                R.id.re_psd);
-        RelativeLayout re_jiqun = (RelativeLayout) getView().findViewById(
-                R.id.re_jiqun);
-        RelativeLayout re_setting = (RelativeLayout) getView().findViewById(
-                R.id.re_video);
-        RelativeLayout re_update = (RelativeLayout) getView().findViewById(
-                R.id.re_update);
+        RelativeLayout re_servicecall = (RelativeLayout) getView().findViewById(
+                R.id.re_servicecall);
+        RelativeLayout re_order=(RelativeLayout)getView().findViewById(
+                R.id.re_order);
+        RelativeLayout re_coupon=(RelativeLayout)getView().findViewById(
+                R.id.re_coupon);
+        RelativeLayout re_shoppingcart=(RelativeLayout)getView().findViewById(
+                R.id.re_shoppingcart);
+        RelativeLayout re_collection=(RelativeLayout)getView().findViewById(
+                R.id.re_collection);
+        RelativeLayout re_settings=(RelativeLayout)getView().findViewById(
+                R.id.re_settings);
         re_xaingce.setOnClickListener(this);
         re_addev.setOnClickListener(this);
-        re_psd.setOnClickListener(this);
-        re_jiqun.setOnClickListener(this);
-        re_setting.setOnClickListener(this);
-        re_update.setOnClickListener(this);
+        re_servicecall.setOnClickListener(this);
+        re_order.setOnClickListener(this);
+        re_coupon.setOnClickListener(this);
+        re_shoppingcart.setOnClickListener(this);
+        re_collection.setOnClickListener(this);
+        re_settings.setOnClickListener(this);
+
+//        Window window = getActivity().getWindow();
+//        //如果系统5.0以上
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+//            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//            window.setStatusBarColor(getResources().getColor(R.color.white));
+//        }
+    }
+
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write PermissionUtils
+        int permission = ActivityCompat.checkSelfPermission(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {// We don't have PermissionUtils so prompt the user
+            ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE);
+        }
     }
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.re_xiangce:
-                showPhotoDialog();
+//                verifyStoragePermissions(getActivity());
+                /**
+                 * Checks if the app has PermissionUtils to write to device storage
+                 * If the app does not has PermissionUtils then the user will be prompted to
+                 * grant permissions
+                 * @param activity
+                 */
+                ToastUtils.makeShortText("该功能即将上线",getActivity());
+            showPhotoDialog();
                 break;
-            case R.id.re_psd:
-                startActivity(new Intent(getActivity(), ChangePassword.class));
-                break;
+//            case R.id.re_psd:
+//                startActivity(new Intent(getActivity(), ChangePassword.class));
+//                break;
             case R.id.re_adddev:
-                startActivity(new Intent(getActivity(), saomaActivity.class));
+                startActivity(new Intent(getActivity(), SaomaActivity.class));
                 break;
-            case R.id.re_jiqun:
-                startActivity(new Intent(getActivity(), ChsChange.class));
+            case R.id.re_servicecall:
+                startActivity(new Intent(getActivity(), ServiceCallSet.class));
                 break;
-            case R.id.re_video:
-                AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                        .setCancelable(false)
-                        .setMessage("注销账户?")
-                        .setNegativeButton("否", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .setPositiveButton("是", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                sipUser.sendMessage(SipMessageFactory.createNotifyRequest(sipUser, SipInfo.user_to,
-                                        SipInfo.user_from, BodyFactory.createLogoutBody()));
-                                if ((groupid1 != null) && !("".equals(groupid1))) {
-                                    SipInfo.sipDev.sendMessage(SipMessageFactory.createNotifyRequest(SipInfo.sipDev, SipInfo.dev_to,
-                                            SipInfo.dev_from, BodyFactory.createLogoutBody()));
-                                }
-                                if ((groupid1 != null) && !("".equals(groupid1))) {
-                                    GroupInfo.groupUdpThread.stopThread();
-                                    GroupInfo.groupKeepAlive.stopThread();
-                                }
-                                dialog.dismiss();
-                                SipInfo.running=false;
-                                ActivityCollector.finishToFirstView();
-                            }
-                        }).create();
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.show();
+            case R.id.re_order:
+                ToastUtils.makeShortText("该功能即将上线",getActivity());
                 break;
-            case R.id.re_update:
-                result = "Finished";
-                loading = new CustomProgressDialog(getActivity());
-                loading.setCancelable(false);
-                loading.setCanceledOnTouchOutside(false);
-                loading.show();
-                //初始化FTP
-                mFtp = new Ftp("101.69.255.132", 21, "ftpall", "123456", Dversion);
-                //获取当前版本号
-                PackageManager packageManager = getActivity().getPackageManager();
-                try {
-                    PackageInfo pi = packageManager.getPackageInfo(getActivity().getPackageName(), 0);
-                    version = pi.versionName;
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
-                }
-                new Thread(checkVersion).start();
+            case R.id.re_coupon:
+                startActivity(new Intent(getActivity(),MyCouponActivity.class));
+                break;
+            case R.id.re_shoppingcart:
+                ToastUtils.makeShortText("该功能即将上线",getActivity());
+                break;
+            case R.id.re_collection:
+                ToastUtils.makeShortText("该功能即将上线",getActivity());
+                break;
+//            case R.id.re_instruction:
+//                startActivity(new Intent(getActivity(),SoftwareIntruct.class));
+//                break;
+            case R.id.re_settings:
+                startActivity(new Intent(getActivity(),Setting.class));
+                break;
+        }
+    }
+    @SuppressLint("NewApi")
+    private void requestReadExternalPermission() {
+
+        if (ContextCompat.checkSelfPermission(getContext()
+                ,Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "READ PermissionUtils IS NOT granted...");
+
+            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                Log.d(TAG, "11111111111111");
+            } else {
+                // 0 是自己定义的请求coude
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+                Log.d(TAG, "222222222222");
+            }
+        } else {
+            Log.d(TAG, "READ PermissionUtils is granted...");
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        Log.d(TAG, "requestCode=" + requestCode + "; --->" + permissions.toString()
+                + "; grantResult=" + grantResults.toString());
+        switch (requestCode) {
+            case 0: {
+
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // PermissionUtils was granted
+                    // request successfully, handle you transactions
+
+                } else {
+
+                    // PermissionUtils denied
+                    // request failed
+                }
+
+                return;
+            }
+            default:
+                break;
+
+        }
+    }
+
+
     private void showPhotoDialog() {
         final AlertDialog dlg = new AlertDialog.Builder(getActivity()).create();
-        dlg.show();
+
         Window window = dlg.getWindow();
         // *** 主要就是在这里实现这种效果的.
         // 设置窗口的内容页面,shrew_exit_dialog.xml文件中定义view内容
         window.setContentView(R.layout.alertdialog);
+//        WindowManager.LayoutParams attributes = window.getAttributes();
+//        attributes.width = WindowManager.LayoutParams.MATCH_PARENT;
+//        attributes.gravity = Gravity.BOTTOM ;
+//        // 一定要重新设置, 才能生效
+//        window.setAttributes(attributes);
+        WindowManager.LayoutParams lp = window.getAttributes();
+        window.setGravity(Gravity.BOTTOM);
         // 为确认按钮添加事件,执行退出应用操作
         TextView tv_paizhao = (TextView) window.findViewById(R.id.tv_content1);
         tv_paizhao.setText("照片");
@@ -226,6 +304,15 @@ private CircleImageView iv_avatar;
                 dlg.cancel();
             }
         });
+        TextView tv_quxiao = (TextView) window.findViewById(R.id.tv_content3);
+        tv_quxiao.setText("取消");
+        tv_quxiao.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dlg.cancel();
+            }
+        });
+        dlg.show();
 
     }
     private void showUserAvatar(ImageView iamgeView, String avatar) {
@@ -385,6 +472,7 @@ private CircleImageView iv_avatar;
     Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
+            Log.d(TAG, "handleMessage: "+msg.what);
             switch (msg.what) {
                 case 0x0001:
                     AlertDialog dialog = new AlertDialog.Builder(getActivity())
@@ -421,9 +509,12 @@ private CircleImageView iv_avatar;
                     break;
                 case 0x0002:
                     //apk文件路径
-                    String localApkPath = apkPath + versionHashMap.get("name");
+                    Log.d(TAG, "handleMessage: "+msg.what);
+                    String localApkPath = apkPath + versionHashMap.get("name")+".apk";
+                    Log.d(TAG, "handleMessage: "+localApkPath);
                     File file = new File(localApkPath);
                     if (file.exists()) {
+                        Log.d(TAG, "handleMessage: "+localApkPath);
                         Intent intent = new Intent();
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         //设置intent的Action属性

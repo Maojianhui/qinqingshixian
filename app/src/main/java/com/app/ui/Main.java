@@ -7,11 +7,13 @@ import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -19,11 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.R;
-import com.app.db.DatabaseInfo;
-import com.app.groupvoice.GroupInfo;
 import com.app.model.Constant;
-import com.app.model.Msg;
-import com.app.model.MyFile;
 import com.app.service.BinderPoolService;
 import com.app.service.NewsService;
 import com.app.sip.BodyFactory;
@@ -31,6 +29,10 @@ import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.sip.SipUser;
 import com.app.tools.ActivityCollector;
+import com.app.ui.fragment.CommunityFragment;
+import com.app.ui.fragment.LaoRenFragment;
+import com.app.ui.fragment.MessageFragment;
+import com.app.ui.fragment.PersonFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -46,7 +48,7 @@ import static com.app.sip.SipInfo.sipUser;
  * 主界面
  */
 
-public class Main extends Activity implements View.OnClickListener, SipUser.LoginNotifyListener, SipUser.BottomListener {
+public class  Main extends Activity implements View.OnClickListener, SipUser.LoginNotifyListener {
     private final String TAG = getClass().getSimpleName();
     @Bind(R.id.network_layout)
     LinearLayout networkLayout;
@@ -60,18 +62,22 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
     ImageButton person;
     @Bind(R.id.person_text)
     TextView personText;
-    @Bind(R.id.shop)
-    ImageButton shop;
-    @Bind(R.id.shop_text)
-    TextView shopText;
+    @Bind(R.id.community)
+    ImageButton community;
+    @Bind(R.id.community_text)
+    TextView communityText;
+//    @Bind(R.id.shop)
+//    ImageButton shop;
+//    @Bind(R.id.shop_text)
+//    TextView shopText;
     @Bind(R.id.old)
     ImageButton old;
     @Bind(R.id.old_text)
     TextView oldText;
     @Bind(R.id.menu_layout)
     LinearLayout menuLayout;
-    @Bind(R.id.count)
-    TextView messageCount;
+//    @Bind(R.id.count)
+//    TextView messageCount;
 
 
     private FragmentManager fm;
@@ -82,6 +88,9 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
     private LaoRenFragment laorenFragment;
     //聊天界面
     private MessageFragment messageFragment;
+    //社区界面
+    private CommunityFragment communityFragment;
+
 //    //语音呼叫界面
 //    private AudioFragment audioFragment;
 //    //联系人界面
@@ -97,6 +106,18 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         init();
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION  //该参数指布局能延伸到navigationbar，我们场景中不应加这个参数
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+            window.setNavigationBarColor(Color.TRANSPARENT); //设置navigationbar颜色为透明
+        }
     }
 
 
@@ -106,19 +127,19 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
     protected void onResume() {
         super.onResume();
         setButtonType(Constant.SAVE_FRAGMENT_SELECT_STATE);
-        SipInfo.lastestMsgs = DatabaseInfo.sqLiteManager.queryLastestMsg();
-        SipInfo.messageCount = 0;
-        for (int i = 0; i < SipInfo.lastestMsgs.size(); i++) {
-            if (SipInfo.lastestMsgs.get(i).getType() == 0) {
-                SipInfo.messageCount += SipInfo.lastestMsgs.get(i).getNewMsgCount();
-            }
-        }
-        if (SipInfo.messageCount != 0) {
-            messageCount.setVisibility(View.VISIBLE);
-            messageCount.setText(String.valueOf(SipInfo.messageCount));
-        } else {
-            messageCount.setVisibility(View.INVISIBLE);
-        }
+//        SipInfo.lastestMsgs = DatabaseInfo.sqLiteManager.queryLastestMsg();
+//        SipInfo.messageCount = 0;
+//        for (int i = 0; i < SipInfo.lastestMsgs.size(); i++) {
+//            if (SipInfo.lastestMsgs.get(i).getType() == 0) {
+//                SipInfo.messageCount += SipInfo.lastestMsgs.get(i).getNewMsgCount();
+//            }
+//        }
+//        if (SipInfo.messageCount != 0) {
+//            messageCount.setVisibility(View.VISIBLE);
+//            messageCount.setText(String.valueOf(SipInfo.messageCount));
+//        } else {
+//            messageCount.setVisibility(View.INVISIBLE);
+//        }
 
     }
 
@@ -128,18 +149,18 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
         setButtonType(Constant.MESSAGE);
         setButtonType(Constant.Person);
 
-        setButtonType(Constant.SHOP);
+//        setButtonType(Constant.SHOP);
+        setButtonType(Constant.COMMUNITY);
         setButtonType(Constant.OLD);
         setButtonType(Constant.SAVE_FRAGMENT_SELECT_STATE);
 
         message.setOnClickListener(this);
-        shop.setOnClickListener(this);
+//        shop.setOnClickListener(this);
+        community.setOnClickListener(this);
         person.setOnClickListener(this);
         old.setOnClickListener(this);
-
-
         sipUser.setLoginNotifyListener(this);
-        sipUser.setBottomListener(this);
+//        sipUser.setBottomListener(this);
         //启动语音电话服务
         //startService(new Intent(Main.this, SipService.class));
         //启动监听服务
@@ -174,11 +195,11 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
                 SipInfo.userLogined = false;
                 SipInfo.devLogined = false;
                 //关闭集群呼叫
-                GroupInfo.rtpAudio.removeParticipant();
-                if ((groupid1 != null) && !("".equals(groupid1))) {
-                    GroupInfo.groupUdpThread.stopThread();
-                    GroupInfo.groupKeepAlive.stopThread();
-                }
+//                GroupInfo.rtpAudio.removeParticipant();
+//                if ((groupid1 != null) && !("".equals(groupid1))) {
+//                    GroupInfo.groupUdpThread.stopThread();
+//                    GroupInfo.groupKeepAlive.stopThread();
+//                }
                 AlertDialog loginReplace = new AlertDialog.Builder(getApplicationContext())
                         .setTitle("账号异地登录")
                         .setMessage("请重新登录")
@@ -200,11 +221,13 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
     public void setButtonType(int id) {
         reSetButtonType();
         Constant.SAVE_FRAGMENT_SELECT_STATE = id;
-        int color = getResources().getColor(R.color.select);
+//        int color = getResources().getColor(R.color.select);
+        int color = getResources().getColor(R.color.reset1);
         switch (id) {
             case Constant.MESSAGE:
-                message.setImageResource(R.drawable.icon_message_pressed);
+                message.setImageResource(R.drawable.ic_message1);
                 messageText.setTextColor(color);
+//                messageText.setTextColor(Color.parseColor("#474646"));
                 showFragment(Constant.MESSAGE);
                 break;
 //            case Constant.CONTACT:
@@ -212,18 +235,23 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
 //                contactsText.setTextColor(color);
 //                showFragment(Constant.CONTACT);
 //                break;
-            case Constant.SHOP:
-                shop.setImageResource(R.drawable.icon_phone_pressed);
-                shopText.setTextColor(color);
-                showFragment(Constant.SHOP);
+            case Constant.COMMUNITY:
+                community.setImageResource(R.drawable.ic_community1);
+                communityText.setTextColor(color);
+                showFragment(Constant.COMMUNITY);
                 break;
+//            case Constant.SHOP:
+//                shop.setImageResource(R.drawable.ic_mail1);
+//                shopText.setTextColor(color);
+////                showFragment(Constant.SHOP);
+//                break;
             case Constant.OLD:
-                old.setImageResource(R.drawable.icon_video_pressed);
+                old.setImageResource(R.drawable.ic_homepage1);
                 oldText.setTextColor(color);
                 showFragment(Constant.OLD);
                 break;
             case Constant.Person:
-                person.setImageResource(R.drawable.icon_menu_pressed);
+                person.setImageResource(R.drawable.ic_myself1);
                 personText.setTextColor(color);
                 showFragment(Constant.Person);
                 break;
@@ -234,14 +262,18 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
      * 重置底部按钮样式
      */
     public void reSetButtonType() {
-        message.setImageResource(R.drawable.icon_message_normal);
-        messageText.setTextColor(Color.WHITE);
-        shop.setImageResource(R.drawable.icon_phone_normal);
-        shopText.setTextColor(Color.WHITE);
-        person.setImageResource(R.drawable.icon_menu_normal);
-        personText.setTextColor(Color.WHITE);
-        old.setImageResource(R.drawable.icon_video_normal);
-        oldText.setTextColor(Color.WHITE);
+        int color1 = getResources().getColor(R.color.set);
+        message.setImageResource(R.drawable.ic_message);
+        messageText.setTextColor(color1);
+//        messageText.setTextColor(Color.parseColor("#595959"));
+//        shop.setImageResource(R.drawable.ic_mail);
+//        shopText.setTextColor(color1);
+        person.setImageResource(R.drawable.ic_myself);
+        personText.setTextColor(color1);
+        old.setImageResource(R.drawable.ic_homepage);
+        oldText.setTextColor(color1);
+        community.setImageResource(R.drawable.ic_community);
+        communityText.setTextColor(color1);
 
     }
 
@@ -249,19 +281,19 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
     protected void onDestroy() {
         super.onDestroy();
 
-        ActivityCollector.removeActivity(this);
+//        ActivityCollector.removeActivity(this);
         ButterKnife.unbind(this);
         if ((groupid1 != null) && !("".equals(groupid1))) {
             SipInfo.keepUserAlive.stopThread();
             SipInfo.keepDevAlive.stopThread();
         }
         //关闭集群呼叫
-       GroupInfo.wakeLock.release();
-        if ((groupid1 != null) && !("".equals(groupid1))) {
-        GroupInfo.rtpAudio.removeParticipant();
-            GroupInfo.groupUdpThread.stopThread();
-            GroupInfo.groupKeepAlive.stopThread();
-        }
+//       GroupInfo.wakeLock.release();
+//        if ((groupid1 != null) && !("".equals(groupid1))) {
+//        GroupInfo.rtpAudio.removeParticipant();
+//            GroupInfo.groupUdpThread.stopThread();
+//            GroupInfo.groupKeepAlive.stopThread();
+//        }
         SipInfo.userLogined = false;
         SipInfo.devLogined = false;
         SipInfo.loginReplace = null;
@@ -304,14 +336,14 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
                     ft.add(R.id.content_frame, messageFragment);
                 }
                 break;
-//            case Constant.CONTACT:
-//                if (contactFragment != null) {
-//                    ft.show(contactFragment);
-//                } else {
-//                    contactFragment = new ContactFragment();
-//                    ft.add(R.id.content_frame, contactFragment);
-//                }
-//                break;
+            case Constant.COMMUNITY:
+                if (communityFragment != null) {
+                    ft.show(communityFragment);
+                } else {
+                    communityFragment = new CommunityFragment();
+                    ft.add(R.id.content_frame, communityFragment);
+                }
+                break;
             case Constant.Person:
                 if (personFragment!= null) {
                     ft.show(personFragment);
@@ -350,11 +382,11 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
                 ft.hide(messageFragment);
             }
         }
-//        if (contactFragment != null) {
-//            if (Constant.SAVE_FRAGMENT_SELECT_STATE != Constant.CONTACT) {
-//                ft.hide(contactFragment);
-//            }
-//        }
+        if (communityFragment != null) {
+            if (Constant.SAVE_FRAGMENT_SELECT_STATE != Constant.COMMUNITY) {
+                ft.hide(communityFragment);
+            }
+        }
         if (personFragment != null) {
             if (Constant.SAVE_FRAGMENT_SELECT_STATE != Constant.Person) {
                 ft.hide(personFragment);
@@ -379,14 +411,18 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
             case R.id.message:
                 setButtonType(Constant.MESSAGE);
                 break;
-            case R.id.shop:
-                setButtonType(Constant.SHOP);
-                break;
+//            case R.id.shop:
+//                setButtonType(Constant.SHOP);
+//                startActivity(new Intent(this,ShopActivity.class));
             case R.id.old:
                 setButtonType(Constant.OLD);
                 break;
             case R.id.person:
                 setButtonType(Constant.Person);
+                break;
+            case R.id.community:
+                setButtonType(Constant.COMMUNITY);
+//                startActivity(new Intent(this,CommunityActivity.class));
                 break;
         }
     }
@@ -413,10 +449,10 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
                                 SipInfo.sipDev.sendMessage(SipMessageFactory.createNotifyRequest(SipInfo.sipDev, SipInfo.dev_to,
                                         SipInfo.dev_from, BodyFactory.createLogoutBody()));
                             }
-                            if ((groupid1 != null) && !("".equals(groupid1))) {
-                                GroupInfo.groupUdpThread.stopThread();
-                                GroupInfo.groupKeepAlive.stopThread();
-                            }
+//                            if ((groupid1 != null) && !("".equals(groupid1))) {
+//                                GroupInfo.groupUdpThread.stopThread();
+//                                GroupInfo.groupKeepAlive.stopThread();
+//                            }
                             dialog.dismiss();
                             running=false;
                             ActivityCollector.finishToFirstView();
@@ -445,22 +481,23 @@ public class Main extends Activity implements View.OnClickListener, SipUser.Logi
 //        contactFragment.notifyFriendListChanged();
     }
 
-    @Override
-    public void onReceivedBottomMessage(Msg msg) {
-        SipInfo.messageCount++;
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                messageCount.setVisibility(View.VISIBLE);
-                messageCount.setText(String.valueOf(SipInfo.messageCount));
-            }
-        });
-    }
+//    @Override
+//    public void onReceivedBottomMessage(Msg msg) {
+//        SipInfo.messageCount++;
+//        handler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                messageCount.setVisibility(View.VISIBLE);
+//                messageCount.setText(String.valueOf(SipInfo.messageCount));
+//            }
+//        });
+//    }
 
-    @Override
-    public void onReceivedBottomFileshare(MyFile myfile) {
-
-    }
+//    @Override
+//
+//    public void onReceivedBottomFileshare(MyFile myfile) {
+//
+//    }
 
 
 }

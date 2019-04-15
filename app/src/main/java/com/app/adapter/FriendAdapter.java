@@ -19,6 +19,7 @@ import com.app.view.CircleImageView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -31,8 +32,9 @@ import butterknife.ButterKnife;
 public class FriendAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<Friend> list;
-private String avatar;
+    private String avatar;
     private String id;
+    public static List<ImageView> imageList=new ArrayList<>();
     public FriendAdapter(ArrayList<Friend> list, Context mContext) {
         this.list = list;
         this.mContext = mContext;
@@ -65,6 +67,7 @@ private String avatar;
         }
       avatar=list.get(position).getAvatar();
         id=list.get(position).getId();
+
 
         Glide.with(mContext).load(Constant.URL_Avatar+id+"/"+avatar).error(R.drawable.empty_photo).into(holder.devIcon);
         holder.check.setVisibility(View.INVISIBLE);

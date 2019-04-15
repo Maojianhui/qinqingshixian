@@ -14,6 +14,7 @@ import com.app.tools.MyToast;
 import com.app.ui.MovieRecord;
 import com.app.ui.MyCamera;
 import com.app.video.H264Sending;
+import com.app.video.H264SendingManager;
 import com.app.video.VideoInfo;
 
 
@@ -58,7 +59,7 @@ public class MyReceiver extends BroadcastReceiver {
                         if (VideoInfo.track != null) {
                             VideoInfo.track.stop();
                         }
-                        H264Sending.G711Running = false;
+                        H264SendingManager.G711Running = false;
                         waitFor();
                         GroupSignaling groupSignaling = new GroupSignaling();
                         groupSignaling.setStart(SipInfo.devId);

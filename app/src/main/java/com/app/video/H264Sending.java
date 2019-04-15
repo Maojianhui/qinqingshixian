@@ -1,6 +1,8 @@
 package com.app.video;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.media.AudioFormat;
@@ -19,14 +21,22 @@ import android.widget.Toast;
 
 import com.app.R;
 import com.app.groupvoice.G711;
+import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
+import com.app.sip.SipMessageFactory;
+import com.app.tools.AECManager;
 import com.app.tools.ActivityCollector;
 import com.app.tools.AvcEncoder;
+
+import org.zoolu.sip.address.NameAddress;
+import org.zoolu.sip.address.SipURL;
 
 import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+import static com.app.sip.SipInfo.devName;
 
 
 /**
@@ -85,6 +95,19 @@ public class H264Sending extends Activity implements SurfaceHolder.Callback, Cam
         ActivityCollector.addActivity(this);
         setContentView(R.layout.h264sending);
         ButterKnife.bind(this);
+//        Button qiehuan=(Button)findViewById(R.id.bt_qiehuan);
+//        qiehuan.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (cameraState==cameraId_back){
+//                    mCamera = Camera.open(cameraId_front);
+//                    cameraState=cameraId_front;
+//                }else if(cameraState==cameraId_front){
+//                    mCamera = Camera.open(cameraId_back);
+//                    cameraState=cameraId_back;
+//                }
+//            }
+//        });
 
         if (Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -178,6 +201,10 @@ public class H264Sending extends Activity implements SurfaceHolder.Callback, Cam
                 AudioFormat.CHANNEL_CONFIGURATION_MONO,
                 AudioFormat.ENCODING_PCM_16BIT,
                 min);
+
+        if(AECManager.isDeviceSupport()){
+            AECManager.getInstance().initAEC(record.getAudioSessionId());
+        }
         record.startRecording();
         return record;
     }
@@ -187,6 +214,7 @@ public class H264Sending extends Activity implements SurfaceHolder.Callback, Cam
         super.onDestroy();
         ButterKnife.unbind(this);
 
+        AECManager.getInstance().release();
         VideoInfo.handler = null;
         if (mCamera != null)  //没有背面摄像头的情况
         {
@@ -236,8 +264,8 @@ public class H264Sending extends Activity implements SurfaceHolder.Callback, Cam
             cameraState = cameraId_out;
         } catch (Exception e) {
             try {
-                mCamera = Camera.open(cameraId_back);
-                cameraState = cameraId_back;
+                mCamera = Camera.open(cameraId_front);
+                cameraState = cameraId_front;
             } catch (Exception e1) {
                 Toast.makeText(this, e1.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -246,10 +274,11 @@ public class H264Sending extends Activity implements SurfaceHolder.Callback, Cam
             if (mCamera == null) return;
             mCamera.setPreviewDisplay(m_surfaceHolder);
             mCamera.setPreviewCallback(this);
-            mCamera.setDisplayOrientation(90);
+            mCamera.setDisplayOrientation(90);//显示的图像旋转
             parame = mCamera.getParameters();    //获取配置参数对象
             parame.setPreviewFrameRate(previewFrameRate);    //设置Camera的演示帧率
             parame.setPreviewFormat(ImageFormat.YV12);
+            //s6 YV12 S9 NV21
             parame.setPreviewSize(previewWidth, previewHeight);    //设置屏幕分辨率
             parame.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
             //android2.3.3以后无需下步
@@ -283,25 +312,29 @@ public class H264Sending extends Activity implements SurfaceHolder.Callback, Cam
 
     @Override
     public void onBackPressed() {
-//        AlertDialog dialog = new AlertDialog.Builder(this)
-//                .setCancelable(false)
-//                .setMessage("是否要关闭监控?")
-//                .setNegativeButton("否", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.dismiss();
-//                    }
-//                })
-//                .setPositiveButton("是", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        org.zoolu.sip.message.Message stop_monitor= SipMessageFactory.createNotifyRequest(
-//                                SipInfo.sipUser, SipInfo.user_to, SipInfo.user_from, BodyFactory.createStopMonitor(SipInfo.devId));
-//                        SipInfo.sipUser.sendMessage(stop_monitor);
-//                    }
-//                }).create();
-//        dialog.setCanceledOnTouchOutside(false);
-//        dialog.show();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setMessage("是否要关闭监控?")
+                .setNegativeButton("否", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("是", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        String devId = SipInfo.paddevId;
+                        SipURL sipURL = new SipURL(devId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
+                        SipInfo.toDev = new NameAddress(devName, sipURL);
+                        org.zoolu.sip.message.Message response = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+                                SipInfo.user_from, BodyFactory.createStopMonitor(devId));
+                        SipInfo.sipUser.sendMessage(response);
+                    }
+                }).create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 
     @Override
@@ -367,9 +400,9 @@ public class H264Sending extends Activity implements SurfaceHolder.Callback, Cam
         //取Info.media_info_megic的后四组设为RTP的同步源码（Ssrc）
         Ssrc = (VideoInfo.media_info_magic[15] & 0x000000ff) | ((VideoInfo.media_info_magic[14] << 8) & 0x0000ff00) | ((VideoInfo.media_info_magic[13] << 16) & 0x00ff0000) | ((VideoInfo.media_info_magic[12] << 24) & 0xff000000);
         rtpsending.rtpSession1.setSsrc(Ssrc);
-        for (int i = 0; i < 2; i++) {
-            rtpsending.rtpSession1.sendData(msg);
-        }
+//        for (int i = 0; i < 2; i++) {
+//            rtpsending.rtpSession1.sendData(msg);
+//        }
     }
 
     /**
@@ -406,9 +439,9 @@ public class H264Sending extends Activity implements SurfaceHolder.Callback, Cam
      */
     public void sendFirstPacket(byte[] h264) {
         Log.d("H264Sending", "发送首包");
-        rtppkt[0] = (byte) (h264[0] & 0xe0);
-        rtppkt[0] = (byte) (rtppkt[0] + 0x1c);
-        rtppkt[1] = (byte) (0x80 + (h264[0] & 0x1f));
+        rtppkt[0] = (byte) (h264[4] & 0xe0);
+        rtppkt[0] = (byte) (rtppkt[4] + 0x1c);
+        rtppkt[1] = (byte) (0x80 + (h264[4] & 0x1f));
         try {
             System.arraycopy(h264, 0, rtppkt, 2, VideoInfo.divide_length);
         } catch (Exception e) {
@@ -432,9 +465,10 @@ public class H264Sending extends Activity implements SurfaceHolder.Callback, Cam
      */
     public void sendMiddlePacket(byte[] h264) {
         Log.d("H264Sending", "发送中包");
-        rtppkt[0] = (byte) (h264[0] & 0xe0);
-        rtppkt[0] = (byte) (rtppkt[0] + 0x1c);
-        rtppkt[1] = (byte) (0x00 + (h264[0] & 0x1f));
+        rtppkt[0] = (byte) (h264[0] & 0xe0);//获取Nalu单元的前三位
+        rtppkt[0] = (byte) (rtppkt[0] + 0x1c);//加上Fu-A的type值28（0x1c）即组成FU indicator
+        rtppkt[1] = (byte) (0x00 + (h264[0] & 0x1f));//中包的ser为000加上Nalu的type组成 FU header
+
 
         try {
             System.arraycopy(h264, VideoInfo.pktflag, rtppkt, 2, VideoInfo.divide_length);

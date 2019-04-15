@@ -4,6 +4,8 @@ package com.app.groupvoice;
 import com.alibaba.fastjson.JSON;
 import com.app.sip.SipInfo;
 
+import static com.app.R.id.devid;
+
 
 /**
  * Created by chenblue23 on 2016/7/6.
@@ -16,10 +18,12 @@ public class GroupKeepAlive extends Thread {
     public GroupKeepAlive() {
         GroupSignaling groupSignaling = new GroupSignaling();
         groupSignaling.setDevid(SipInfo.devId);
-        rtpHeartbeat = JSON.toJSONString(groupSignaling);
+        //rtpHeartbeat = JSON.toJSONString(groupSignaling);
+        rtpHeartbeat = groupSignaling.toRTPHeartBeatString();
         groupSignaling = new GroupSignaling();
         groupSignaling.setSignal(SipInfo.devId);
-        heartbeat = JSON.toJSONString(groupSignaling);
+        //heartbeat = JSON.toJSONString(groupSignaling);
+        heartbeat = groupSignaling.toHeartBeatString();
         groupSignaling = null;
     }
 

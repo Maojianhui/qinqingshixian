@@ -1,26 +1,41 @@
 package com.app.friendCircleMain.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.os.Environment;
 import android.util.AttributeSet;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.LoadPicture;
 import com.app.R;
+import com.app.sip.BodyFactory;
+import com.app.sip.SipInfo;
+import com.app.sip.SipMessageFactory;
+
+import org.zoolu.sip.address.NameAddress;
+import org.zoolu.sip.address.SipURL;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
+
 /**
  * 描述:
  * 作者：HMY
  * 时间：2016/5/10
  */
 public abstract class NineGridLayout extends ViewGroup {
+    PopupMenu popup = null;
     private LoadPicture avatarLoader;
     private static final float DEFUALT_SPACING = 3f;
     private static final int MAX_COUNT = 9;
@@ -182,7 +197,7 @@ public abstract class NineGridLayout extends ViewGroup {
         params.height = (int) (singleHeight * mRows + mSpacing * (mRows - 1));
         setLayoutParams(params);
     }
-
+//显示朋友圈的每一张图片
     private RatioImageView createImageView(final int i, final String url) {
         RatioImageView imageView = new RatioImageView(mContext);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -190,11 +205,97 @@ public abstract class NineGridLayout extends ViewGroup {
             @Override
             public void onClick(View v) {
                 ArrayList<String> aaa=(ArrayList<String>)mUrlList;
-                onClickImage(i, url, aaa);
+                onClickImage(i, url, aaa);//显示大图
+
+            }
+        });
+
+        imageView.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+//                showPopMenu(v);
+                popup = new PopupMenu(mContext, v);
+                // 将R.menu.popup_menu菜单资源加载到popup菜单中
+                popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+                // 为popup菜单的菜单项单击事件绑定事件监听器
+                popup.setOnMenuItemClickListener(
+                        new PopupMenu.OnMenuItemClickListener()
+                        {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item)
+                            {
+                                switch (item.getItemId())
+                                {
+                                    case R.id.share:
+                                        //发送图片url分享图片
+                                        String devId = SipInfo.paddevId;
+                                        String devName = "pad";
+                                        final String devType2 = "2";
+                                        SipURL sipURL = new SipURL(devId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
+                                        SipInfo.toDev = new NameAddress(devName, sipURL);
+                                        org.zoolu.sip.message.Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+                                                SipInfo.user_from, BodyFactory.createImageShareNotify(url));
+                                        SipInfo.sipUser.sendMessage(query);
+
+                                        break;
+                                }
+                                return true;
+                            }
+                        });
+                popup.show();
+
+                return false;
             }
         });
         return imageView;
     }
+
+//    private void showShareDialog() {
+//        AlertDialog dialog = new AlertDialog.Builder(mContext).create();//创建一个AlertDialog对象
+//        dialog.show();
+//        Window window = dialog.getWindow();
+//        window.setContentView(R.layout.alertdialog1);
+//        TextView bt_share = (TextView) findViewById(R.id.tv_share);
+////        bt_share.setOnClickListener(new OnClickListener() {
+////            @Override
+////            public void onClick(View v) {
+////                Toast.makeText(mContext, "分享照片", Toast.LENGTH_SHORT).show();
+////            }
+////        });
+//    }
+//    public void showPopMenu(View view){
+//        // 创建PopupMenu对象
+//        popup = new PopupMenu(mContext, view);
+//        // 将R.menu.popup_menu菜单资源加载到popup菜单中
+//        popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+//        // 为popup菜单的菜单项单击事件绑定事件监听器
+//        popup.setOnMenuItemClickListener(
+//                new PopupMenu.OnMenuItemClickListener()
+//                {
+//                    @Override
+//                    public boolean onMenuItemClick(MenuItem item)
+//                    {
+//                        switch (item.getItemId())
+//                        {
+//                            case R.id.share:
+//                                //发送url
+//                                String devId = SipInfo.paddevId;
+////                devId = devId2.substring(0, devId2.length() - 4).concat("0160");//设备id后4位替换成0160
+//                                String devName = "pad";
+//                                final String devType2 = "2";
+//                                SipURL sipURL = new SipURL(devId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
+//                                SipInfo.toDev = new NameAddress(devName, sipURL);
+//                                org.zoolu.sip.message.Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+//                                        SipInfo.user_from, BodyFactory.createImageShareNotify(url));
+//                                SipInfo.sipUser.sendMessage(query);
+//
+//                                break;
+//                        }
+//                        return true;
+//                    }
+//                });
+//        popup.show();
+//    }
 
 //    private void showUserAvatar(ImageView iamgeView, String avatar) {
 //        final String url_avatar = Constant.URL_Avatar + avatar;

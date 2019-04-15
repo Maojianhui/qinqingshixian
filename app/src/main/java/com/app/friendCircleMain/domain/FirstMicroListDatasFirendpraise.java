@@ -5,6 +5,8 @@ public class FirstMicroListDatasFirendpraise extends MyBaseBean{
 	private String sid;
 	private String uid;
 	private String uname;
+	private String nickname;
+	private String praisetype;
 	
 	public String getId() {
 		return id;
@@ -30,5 +32,15 @@ public class FirstMicroListDatasFirendpraise extends MyBaseBean{
 	public void setUname(String uname) {
 		this.uname = uname;
 	}
-	
+
+	public void setNickname(String nickname){this.nickname=nickname;}
+
+	public  String getNickname(){return nickname;}
+	public String getPraisetype() {
+		return praisetype;
+	}
+
+	public void setPraisetype(String praisetype) {
+		this.praisetype = praisetype;
+	}
 }

@@ -3,12 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
+    android:fitsSystemWindows="true"
+    android:clipToPadding="true"
     android:orientation="vertical" >
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="#ff495a" >
+        android:background="@color/newbackground" >
 
         <TextView
             android:layout_width="wrap_content"
@@ -16,19 +18,21 @@
             android:layout_centerInParent="true"
             android:text="相册"
             android:textColor="#ffffff"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:id="@+id/textView6" />
 
         <TextView
             android:id="@+id/t1"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
             android:layout_marginRight="8dp"
             android:gravity="center"
             android:text="取消"
             android:textColor="@drawable/text_while"
-            android:textSize="20sp" />
+            android:textSize="16sp"
+            android:layout_alignBaseline="@+id/textView6"
+            android:layout_alignBottom="@+id/textView6"
+            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 
     <LinearLayout
@@ -55,7 +59,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="1dp" 
-                android:background="#ff495a"
+                android:background="@color/newbackground"
                 />
 
             <Button
@@ -63,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/bt_nobgd"
-                android:textColor="#ff495a"
+                android:textColor="@color/newbackground"
                 android:textSize="20sp"
                 android:text="完成" />
         </LinearLayout>

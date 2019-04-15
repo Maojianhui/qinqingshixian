@@ -4,8 +4,12 @@ import android.app.NotificationManager;
 import android.net.sip.SipAudioCall;
 import android.os.Handler;
 
+import com.app.db.MyDatabaseHelper;
+import com.app.model.Addressitem;
 import com.app.model.App;
 import com.app.model.Device;
+import com.app.model.Device1;
+import com.app.model.Farmilymember;
 import com.app.model.Friend;
 import com.app.model.LastestMsg;
 import com.app.model.MailInfo;
@@ -21,6 +25,7 @@ import org.zoolu.sip.message.Message;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Author chzjy
@@ -41,8 +46,12 @@ public class SipInfo {
     //用户注册获取用户ID使用
     public static String REGISTER_ID = "330100000010000190";
     //服务器ip
-    public static String serverIp = "101.69.255.134";
-    public static String serverIptest = "101.69.255.132";
+    public static String serverIp = "sip.qinqingonline.com";
+    public static String serverIptest = "sip.qinqingonline.com";
+    public static String serverIptest1 = "118.31.71.150";
+
+    //验证码
+    public static String code;
     //用户账号
     public static String userAccount;
     public static String userAccount2;
@@ -51,6 +60,10 @@ public class SipInfo {
     public static String passWord2;
     //设备id
     public static String devId;
+
+    //设备用户id
+    public static String paduserid;
+
     public static String paddevId;
     //用户id
     public static String userId;
@@ -116,6 +129,13 @@ public class SipInfo {
     public static int devCount;
     //设备列表
     public static ArrayList<Device> devList = new ArrayList<>();
+
+    //地址列表
+    public static ArrayList<Addressitem> addressList=new ArrayList<>();
+
+    public static ArrayList<Friend> friendsList = new ArrayList<>();
+    //设备列表
+    public static ArrayList<Device1> devList1 = new ArrayList<>();
     //sip电话服务对象
     public static SipService sipService;
     //上一个电话对象
@@ -130,10 +150,13 @@ public class SipInfo {
     public static boolean inviteResponse;
     //视频编码状态
     public static boolean decoding = false;
+
     //根目录
     public static String localSdCard;
     //新邮件(关于NoteBook)
     public static Handler newMail;
+    //群组用户id
+    public static String groupid;
     //异地登录
     public static Handler loginReplace;
     //新工单(关于TaskApp)
@@ -159,7 +182,40 @@ public class SipInfo {
     //邮件列表
     public static List<MailInfo> maillist = new ArrayList<>();
 
+    public static List<Farmilymember> farmilymemberList = new ArrayList<>();
+    public static MyDatabaseHelper dbHelper;
+
     public static NotificationManager notificationManager;
 
     public static boolean Recording = false;
+
+    public static boolean isWaitingFeedback = false;
+    public static boolean IsVideoOn=false;
+    public static boolean finish=false;
+    public static boolean  single=false;
+    public static String port;
+
+    public static float  bitErrorRate;
+    public static int previewWidth;
+    public static int previewHeight;
+    public static String phoneType;
+    public static boolean isEditor=false;
+
+    //添加收货地址相关
+    public static String userAddress;
+    public static String detailAddress;
+    public static String userName;
+    public static String userPhoneNum;
+    //编辑的地址在手机列表的位置
+    public static int listPosition;
+    //编辑的地址在数据库中的position
+    public static int addressPosition;
+    //是否为默认地址；1-默认、0-非默认
+    public static int  isDefault;
+
+    public static int width;
+    public static int height;
+
+    //是否是验证码登录，在修改密码的时候作区别
+    public static boolean  isVericodeLogin=false;
 }

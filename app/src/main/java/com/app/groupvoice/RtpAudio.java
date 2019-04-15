@@ -7,6 +7,8 @@ import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.util.Log;
 
+import com.app.tools.AECManager;
+
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.Random;
@@ -105,12 +107,19 @@ public class RtpAudio implements RTPAppIntf {
     private Runnable G711_encode = new Runnable() {
         public void run() {
             android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
+            //标准音乐播放使用优先级
             int min = AudioRecord
                     .getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO,
                             AudioFormat.ENCODING_PCM_16BIT);
-            AudioRecord record = new AudioRecord(MediaRecorder.AudioSource.MIC,
-                    SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT, min);
+            AudioRecord record = new AudioRecord(MediaRecorder.AudioSource.MIC,//麦克风数据
+                    SAMPLE_RATE,//采样频率
+                    AudioFormat.CHANNEL_IN_MONO,//单声道
+                    AudioFormat.ENCODING_PCM_16BIT,//16bit采样精度
+                    min);//内部记录缓冲区大小
+
+            if(AECManager.isDeviceSupport()){
+                AECManager.getInstance().initAEC(record.getAudioSessionId());
+            }
             record.startRecording();
             short[] audioData = new short[FRAME_SIZE];
             byte[] encodeData = new byte[FRAME_SIZE];
@@ -126,6 +135,7 @@ public class RtpAudio implements RTPAppIntf {
             }
             record.stop();
             record.release();
+            AECManager.getInstance().release();
         }
     };
 

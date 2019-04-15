@@ -18,6 +18,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.Semaphore;
 
+import static android.R.attr.type;
+
 
 /**
  * @ClassName: ImageLoader
@@ -102,7 +104,6 @@ public class ImageLoader {
 		}
 		return mInstance;
 	}
-
 	/**
 	 * 初始化
 	 *

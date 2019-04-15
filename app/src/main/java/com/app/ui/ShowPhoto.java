@@ -53,6 +53,7 @@ public class ShowPhoto extends Activity {
                     photo.setImageBitmap(currentBitmap);
                 }else{
                     photo.setImageDrawable(getDrawable(R.drawable.ic_error));
+
                 }
                 break;
             case 1:

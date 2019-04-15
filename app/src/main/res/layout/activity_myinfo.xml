@@ -5,73 +5,68 @@
     android:background="#ebebeb"
     android:orientation="vertical" >
 
+
     <RelativeLayout
-        android:id="@+id/title"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_top_bar"
-        android:background="@color/common_top_bar_blue">
-
-        <ImageView
-            android:id="@+id/iv_back"
-            android:layout_width="40dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:onClick="back"
-            android:paddingBottom="5dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="5dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/top_bar_back" />
-
-        <View
-            android:id="@+id/view_temp"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_toRightOf="@id/iv_back"
-            android:background="#14191A" />
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:background="@color/white">
 
         <TextView
+            android:id="@+id/titleset"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@id/view_temp"
-            android:text="个人信息"
-            android:textColor="#ffffff"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:text="个人资料"
+            android:textColor="@color/black"
             android:textSize="18sp" />
 
+        <ImageView
+            android:id="@+id/iv_back9"
+            android:layout_width="25dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/leftarrow"/>
 
     </RelativeLayout>
+
 
     <RelativeLayout
         android:id="@+id/re_avatar"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/btn_list_item_bg"
-        android:clickable="true" >
+        android:clickable="true">
 
         <com.app.view.CircleImageView
             android:id="@+id/iv_avatar"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_alignParentRight="true"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="12dp"
+            android:layout_marginEnd="30dp"
             android:src="@drawable/default_useravatar" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:text="头像"
+            android:layout_marginStart="20dp"
+            android:text="更换头像"
             android:textColor="#353535"
             android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/rightarrow1"
+            android:layout_marginEnd="5dp"
+            android:layout_alignParentEnd="true"/>
+
 
         <View
             android:layout_width="match_parent"
@@ -85,31 +80,39 @@
     <RelativeLayout
         android:id="@+id/re_name"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="49dp"
         android:background="@drawable/btn_list_item_bg"
-        android:clickable="true" >
+        android:clickable="true">
 
         <TextView
             android:id="@+id/tv_temp_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:text="昵称"
             android:textColor="#353535"
             android:textSize="16sp" />
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/rightarrow1"
+            android:layout_marginEnd="5dp"
+            android:layout_alignParentEnd="true"/>
+
 
         <TextView
             android:id="@+id/ttv_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
-            android:layout_toRightOf="@id/tv_temp_name"
+            android:layout_marginEnd="30dp"
+            android:layout_toEndOf="@id/tv_temp_name"
             android:ellipsize="end"
-            android:gravity="right"
+            android:gravity="end"
             android:singleLine="true"
             android:text="黄方意"
             android:textColor="#AAAAAA"
@@ -122,6 +125,50 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:background="#dadada" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/re_sex"
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:background="@drawable/btn_list_item_bg">
+
+        <TextView
+            android:id="@+id/tv_sex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            android:text="性别"
+            android:textColor="#353535"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/rightarrow1"
+            android:layout_marginEnd="5dp"
+            android:layout_alignParentEnd="true"/>
+
+
+        <TextView
+            android:id="@+id/tv_sex1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="30dp"
+            android:layout_toEndOf="@id/tv_sex"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:singleLine="true"
+            android:text="男"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp" />
+
     </RelativeLayout>
 
 

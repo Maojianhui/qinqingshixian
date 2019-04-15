@@ -40,7 +40,7 @@ import java.util.concurrent.Executors;
         public Bitmap loadImage(final ImageView imageView, final String imageUrl,
                                 final ImageDownloadedCallBack imageDownloadedCallBack) {
             final String filename = imageUrl
-                    .substring(imageUrl.lastIndexOf("/") + 1);
+                    .substring(imageUrl.lastIndexOf("/") + 1);//获取avatar
             final String filepath = fileUtil.getAbsolutePath() + filename;
 
             // 先从内存中拿

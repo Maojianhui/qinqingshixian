@@ -10,6 +10,7 @@ import android.util.Log;
 import com.app.service.SipService;
 import com.app.sip.SipInfo;
 import com.app.ui.PhoneCall;
+import com.app.ui.VideoDial;
 
 
 public class IncomingCallReceiver extends BroadcastReceiver {
@@ -31,6 +32,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                 if (call.equals(SipInfo.sipService.getCall())) {
                     if (SipInfo.sipService.getAudioCallListener() != null) {
                         SipInfo.sipService.getAudioCallListener().endCall();
+
                     }
                     //发送消息通知H264Sending重新开启G711_encode线程
 //                    if (VideoInfo.handler != null) {

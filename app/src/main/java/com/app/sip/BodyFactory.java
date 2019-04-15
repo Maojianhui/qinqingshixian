@@ -71,9 +71,13 @@ public class BodyFactory {
 
     //请求设备参数
     public static String createQueryBody(String devType) {
-        return "<?xml version=\"1.0\"?>\r\n<query>\r\n<variable>MediaInfo_Video</variable>\r\n<dev_type>" +
+        return "<?xml version=\"1.0\"?>\r\n" +
+                "<query>\r\n" +
+                "<variable>MediaInfo_Video</variable>\r\n" +
+                "<dev_type>" +
                 devType +
-                "</dev_type>\r\n</query>\r\n";
+                "</dev_type>\r\n" +
+                "</query>\r\n";
     }
 
     /**
@@ -364,5 +368,133 @@ public class BodyFactory {
         body.append("</addevent>\r\n</list_update>\r\n");
         return body.toString();
 
+    }
+    //视频请求
+    public static String createCallRequest(String request,String devid,String userId){
+        StringBuilder body =new StringBuilder();
+        body.append("<?xml version=\"1.0\"?>\r\n");
+        body.append("<operation>\r\n<operate>");
+        body.append(request);
+        body.append("</operate>\r\n<devId>");
+        body.append(devid);
+        body.append("</devId>\r\n<userId>");
+        body.append(userId);
+        body.append("</userId>\r\n</operation>");
+        return  body.toString();
+    }
+    //视频请求回复
+    public static String createCallReply(String result){
+        StringBuilder body=new StringBuilder();
+        body.append("<?xml version=\"1.0\"?>\r\n");
+        body.append("<call_response>\r\n<operate>");
+        body.append(result);
+        body.append("</operate>\r\n</call_response>\r\n");
+        return body.toString();
+    }
+    //服务电话
+    public static String createServiceCall(String item,String phone){
+        StringBuilder body=new StringBuilder();
+        body.append("<?xml version=\"1.0\"?>\r\n");
+        body.append("<service_call>\r\n<item>");
+        body.append(item);
+        body.append("</item>\r\n<telephone>");
+        body.append(phone);
+        body.append("</telephone>\r\n</service_call>\r\n");
+        return body.toString();
+    }
+    //上下线提醒
+    public static String createOnlineNotify(String status,String userid){
+        StringBuilder body=new StringBuilder();
+        body.append("<?xml version=\"1.0\"?>\r\n");
+        body.append("<user_mode>\r\n<status>");
+        body.append(status);
+        body.append("</status>\r\n<userId>" );
+        body.append(userid);
+        body.append("</userId>\r\n</user_mode>\r\n");
+        return body.toString();
+    }
+    //上线提醒
+    public static String createOnlineNotify(String userid){
+        StringBuilder body=new StringBuilder();
+        body.append("<?xml version=\"1.0\"?>\r\n");
+        body.append("<user_online>\r\n<userid>");
+        body.append(userid);
+        body.append("</userid>\r\n</user_online>");
+        return body.toString();
+    }
+    //下线提醒
+    public static String createOfflineNotify(String userid){
+        StringBuilder body=new StringBuilder();
+        body.append("<?xml version=\"1.0\"?>\r\n");
+        body.append("<user_offline>\r\n<userid>");
+        body.append(userid);
+        body.append("</userid>\r\n</user_offline>");
+        return body.toString();
+    }
+    //扫码绑定组呼群组
+    public static String createGroupBindNotify(String userid,String padid,String port){
+        StringBuilder body=new StringBuilder();
+        body.append("<?xml version=\"1.0\"?>\r\n");
+        body.append("<group_bind>\r\n<userid>");
+        body.append(userid);
+        body.append("</userid>\r\n<paduserid>");
+        body.append(padid);
+        body.append("</paduserid>\r\n<port>");
+        body.append(port);
+        body.append("</port>\r\n</group_bind>");
+        return body.toString();
+    }
+    //图片分享
+    public static String createImageShareNotify(String url){
+        StringBuilder body=new StringBuilder();
+        body.append("<?xml version=\"1.0\"?>\r\n");
+        body.append("<image_share>\r\n<image_url>");
+        body.append(url);
+        body.append("</image_url>\r\n</image_share>");
+        return body.toString();
+    }
+    //手动添加设备信息获取
+    public static String createAdddevNotify(String devid,String userid){
+        StringBuilder body=new StringBuilder();
+        body.append("<?xml version=\"1.0\"?>\r\n");
+        body.append("<group_bind_code>\r\n<devid>");
+        body.append(devid);
+        body.append("</devid>\r\n<userid>");
+        body.append(userid);
+        body.append("</userid>\r\n</group_bind_code>");
+        return body.toString();
+    }
+    //视频结束通知
+    public static String createStopMonitor(String devId){
+        StringBuilder body=new StringBuilder();
+        body.append("<?xml version=\"1.0\"?>\n");
+        body.append("<stop_monitor>\r\n<devId>");
+        body.append(devId);
+        body.append("</devId>\r\n");
+        body.append("</stop_monitor>");
+        return body.toString();
+    }
+    //监控标志位
+    public static String createStartMonitor(Boolean ismonitor,String devid,String userid){
+        StringBuilder body=new StringBuilder();
+        body.append("<?xml version=\"1.0\"?>\n");
+        body.append("<is_monitor>\r\n<ismonitor>");
+        body.append(ismonitor);
+        body.append("</ismonitor>\r\n<devid>");
+        body.append(devid);
+        body.append("</devid>\r\n<userid>");
+        body.append(userid);
+        body.append("</userid>\r\n</is_monitor>");
+        return body.toString();
+    }
+    //获取端口号
+    public static String createGetPort(String userid){
+        StringBuilder body=new StringBuilder();
+        body.append("<?xml version=\"1.0\"?>\n");
+        body.append("<port_get>\r\n<userid>");
+        body.append(userid);
+        body.append("</userid>\r\n");
+        body.append("</port_get>");
+        return body.toString();
     }
 }

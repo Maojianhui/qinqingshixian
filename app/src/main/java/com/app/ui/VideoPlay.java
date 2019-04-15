@@ -7,26 +7,42 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.app.R;
+import com.app.model.MessageEvent;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.sip.SipUser;
 import com.app.tools.H264decoder;
 import com.app.video.VideoInfo;
+import com.app.videoAndPictureUpload.Image;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.zoolu.sip.message.Message;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -67,34 +83,87 @@ public class VideoPlay extends Activity implements SurfaceHolder.Callback,SipUse
         ButterKnife.bind(this);
         SipInfo.sipUser.setMonitor(this);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(getResources().getColor(R.color.newbackground));
+        }
+
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
         h264decoder=new H264decoder();
-        Button left=(Button)findViewById(R.id.left);
-        Button right=(Button)findViewById(R.id.right);
-        Button stop=(Button)findViewById(R.id.stop);
-        left.setOnClickListener(new View.OnClickListener() {
+        ImageView left=(ImageView)findViewById(R.id.left);
+        ImageView right=(ImageView)findViewById(R.id.right);
+        ImageView stop=(ImageView)findViewById(R.id.stop);
+        EventBus.getDefault().register(this);
+//        left.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+//                        SipInfo.user_from, BodyFactory.createVideoControlResBody("left"));
+//                SipInfo.sipUser.sendMessage(query);
+//            }
+//        });
+        right.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
-                        SipInfo.user_from, BodyFactory.createVideoControlResBody("left"));
-                SipInfo.sipUser.sendMessage(query);
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction()==MotionEvent.ACTION_DOWN){
+                    Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+                            SipInfo.user_from, BodyFactory.createVideoControlResBody("right"));
+                    SipInfo.sipUser.sendMessage(query);
+                }
+//                    handler.postDelayed(mLongPressed,1000);
+
+                if(event.getAction()==MotionEvent.ACTION_UP){
+//                    handler.removeCallbacks(mLongPressed);
+                    Message query1 = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+                            SipInfo.user_from, BodyFactory.createVideoControlResBody("stop"));
+                    SipInfo.sipUser.sendMessage(query1);
+                }
+                return true;
             }
         });
-        right.setOnClickListener(new View.OnClickListener() {
+        left.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
-                        SipInfo.user_from, BodyFactory.createVideoControlResBody("right"));
-                SipInfo.sipUser.sendMessage(query);
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction()==MotionEvent.ACTION_DOWN){
+                    Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+                            SipInfo.user_from, BodyFactory.createVideoControlResBody("left"));
+                    SipInfo.sipUser.sendMessage(query);
+                }
+//                    handler.postDelayed(mLongPressed,1000);
+
+                if(event.getAction()==MotionEvent.ACTION_UP){
+//                    handler.removeCallbacks(mLongPressed);
+                    Message query1 = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+                            SipInfo.user_from, BodyFactory.createVideoControlResBody("stop"));
+                    SipInfo.sipUser.sendMessage(query1);
+                }
+                return true;
             }
         });
-        stop.setOnClickListener(new View.OnClickListener() {
+
+//        right.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+//                        SipInfo.user_from, BodyFactory.createVideoControlResBody("right"));
+//                SipInfo.sipUser.sendMessage(query);
+//            }h
+//        });
+//        stop.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+//                        SipInfo.user_from, BodyFactory.createVideoControlResBody("stop"));
+//                SipInfo.sipUser.sendMessage(query);
+//            }
+//        });
+        ImageView back1=(ImageView)findViewById(R.id.back1);
+        back1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
-                        SipInfo.user_from, BodyFactory.createVideoControlResBody("stop"));
-                SipInfo.sipUser.sendMessage(query);
+                closeVideo();
             }
         });
 
@@ -137,6 +206,15 @@ public class VideoPlay extends Activity implements SurfaceHolder.Callback,SipUse
 //        }
 //    };
 
+    final Handler handler = new Handler();
+    final Runnable mLongPressed = new Runnable() {
+        public void run() {
+            // 长按处理
+            Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+                    SipInfo.user_from, BodyFactory.createVideoControlResBody("right"));
+            SipInfo.sipUser.sendMessage(query);
+        }
+    };
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -161,6 +239,7 @@ public class VideoPlay extends Activity implements SurfaceHolder.Callback,SipUse
         VideoInfo.rtpVideo.endSession();
         VideoInfo.track.stop();
 //        buffer.clear();
+        EventBus.getDefault().unregister(this);
         ButterKnife.unbind(this);
         System.gc();//系统垃圾回收
     }
@@ -217,6 +296,7 @@ public class VideoPlay extends Activity implements SurfaceHolder.Callback,SipUse
 //                            }
 
                                 //硬解码
+//                                saveH264DataToFile(nal);
                                 h264decoder.onFrame(nal, 0, nal.length);
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -233,6 +313,24 @@ public class VideoPlay extends Activity implements SurfaceHolder.Callback,SipUse
             }
         }
     };
+    private BufferedOutputStream mH264DataFile;
+    private void saveH264DataToFile(byte[] dataToWrite) {
+        File f = new File(Environment.getExternalStorageDirectory(), "DCM/video_encoded.264");
+
+        try {
+            mH264DataFile = new BufferedOutputStream(new FileOutputStream(f));
+            Log.i("AvcEncoder", "outputStream initialized");
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        try {
+            mH264DataFile.write(dataToWrite, 0, dataToWrite.length);
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+        }
+    }
+
+
 
 
 //      软解码呈现画面
@@ -293,6 +391,9 @@ public class VideoPlay extends Activity implements SurfaceHolder.Callback,SipUse
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         closeVideo();
+//                        SipInfo.IsVideoOn=false;
+//                        dialog.dismiss();
+                        finish();
                     }
                 })
                 .setNegativeButton("否", new DialogInterface.OnClickListener() {
@@ -306,10 +407,21 @@ public class VideoPlay extends Activity implements SurfaceHolder.Callback,SipUse
         dialog.setCanceledOnTouchOutside(false);
     }
 
-    private void closeVideo() {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        if (event.getMessage().equals("关闭视频")) {
+            Log.i(TAG, "message is " + event.getMessage());
+            closeVideo();
+        }else
+            if(event.getMessage().equals("停止浏览")){
+                closeVideo();
+            }
+    }
+    private  void closeVideo() {
         Message bye = SipMessageFactory.createByeRequest(SipInfo.sipUser, SipInfo.toDev, SipInfo.user_from);
         //创建结束视频请求
         SipInfo.sipUser.sendMessage(bye);
+        EventBus.getDefault().post(new MessageEvent("结束"));
         finish();
     }
 

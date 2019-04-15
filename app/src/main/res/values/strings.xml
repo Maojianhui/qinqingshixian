@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="all_video">所有视频</string>
-    <string name="app_name">亲情在线</string>
+    <string name="app_name">亲情视线</string>
     <string name="connect_failed">无网络?</string>
     <string name="soft_update">软件更新</string>
     <string name="rootPath">/mnt/sdcard/PNS9</string>
@@ -9,10 +9,11 @@
     <string name="contact">联系人</string>
     <string name="menu">菜单</string>
     <string name="phone">语音电话</string>
-    <string name="old">情亲在线</string>
+    <string name="old">首页</string>
     <string name="video">视频浏览</string>
-    <string name="person">我的</string>
+    <string name="person">我</string>
     <string name="shop">商城</string>
+    <string name="community">社区</string>string>
     <string name="login">登录/login</string>
     <string name="login_name1">宁夏公路管理局银川分局</string>
     <string name="login_name2">贺兰山收费站单兵系统</string>
@@ -38,6 +39,7 @@
     <string name="NoApp">没有应用</string>
     <string name="download">下载</string>
     <string name="desc">描述</string>
+    <string name="alirtc_permission">请先给予权限</string>
     <string name="str_recorder_normal">按住说话</string>
     <string name="str_recorder_recording">松开结束</string>
     <string name="str_recorder_want_cancel">松开手指，取消发送</string>
@@ -69,6 +71,7 @@
     <string name="count_down">%ss</string>
     <string name="tip_please_input_phone">请输入手机号码</string>
     <string name="tip_phone_can_not_be_empty">手机号码不能为空</string>
+    <string name="tip_password_not_same">旧密码输入错误</string>
     <string name="tip_please_input_code">请输入验证码</string>
     <string name="tip_please_input_6_32_password">请输入6-32个密码</string>
 

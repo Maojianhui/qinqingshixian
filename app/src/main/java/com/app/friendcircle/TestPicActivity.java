@@ -4,11 +4,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.app.R;
 
@@ -32,6 +37,25 @@ public class TestPicActivity extends Activity {
 
 		helper = AlbumHelper.getHelper();
 		helper.init(getApplicationContext());
+
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			Window window = getWindow();
+			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+					| WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+			window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+					| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION  //该参数指布局能延伸到navigationbar，我们场景中不应加这个参数
+					| View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+			window.setStatusBarColor(Color.TRANSPARENT);
+			window.setNavigationBarColor(Color.TRANSPARENT); //设置navigationbar颜色为透明
+		}
+		int color = getResources().getColor(R.color.reset1);
+		Window window = getWindow();
+		//如果系统5.0以上
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+			window.setStatusBarColor(color);
+		}
 
 		initData();
 		initView();
@@ -62,6 +86,13 @@ public class TestPicActivity extends Activity {
 		gridView = (GridView) findViewById(R.id.gridview);
 		adapter = new ImageBucketAdapter(TestPicActivity.this, dataList);
 		gridView.setAdapter(adapter);
+		TextView cancel=(TextView)findViewById(R.id.tv_cancel);
+		cancel.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
 
 		gridView.setOnItemClickListener(new OnItemClickListener() {
 

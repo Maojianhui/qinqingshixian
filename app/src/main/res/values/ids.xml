@@ -22,4 +22,6 @@
   <item type="id" name="quit"/>
   <item type="id" name="restart_preview"/>
   <item type="id" name="return_scan_result"/>
+  <item name="id_ok" type="id" />
+  <item name="id_page" type="id" />
 </resources>

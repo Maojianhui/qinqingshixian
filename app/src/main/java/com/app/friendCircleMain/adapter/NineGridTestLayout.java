@@ -3,6 +3,7 @@ package com.app.friendCircleMain.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 
 import com.app.R;
 import com.bumptech.glide.Glide;
@@ -29,6 +30,7 @@ public class NineGridTestLayout extends NineGridLayout {
         super(context, attrs);
     }
 
+
     @Override
     protected boolean displayOneImage(final RatioImageView imageView, String url, final int parentWidth) {
         Glide.with(mContext).load(url).error(R.drawable.empty_photo).listener(new RequestListener<String, GlideDrawable>() {
@@ -36,6 +38,7 @@ public class NineGridTestLayout extends NineGridLayout {
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
                 return false;
             }
+
 
             @Override
             public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
@@ -99,11 +102,14 @@ public class NineGridTestLayout extends NineGridLayout {
         return false;
     }
 
+
+
     @Override
     protected void displayImage(RatioImageView imageView, String url) {
         //ImageLoaderUtil.getImageLoader(mContext).displayImage(url, imageView, ImageLoaderUtil.getPhotoImageOption());
     Glide.with(mContext).load(url).error(R.drawable.empty_photo).into(imageView);
     }
+
 
     @Override
     protected void onClickImage(int i, String url, ArrayList<String> urlList) {
@@ -123,4 +129,5 @@ public class NineGridTestLayout extends NineGridLayout {
         intent.putExtra(ImagePagerActivity.EXTRA_IMAGE_INDEX, position);
         mContext.startActivity(intent);
     }
+
 }

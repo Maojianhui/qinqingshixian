@@ -30,7 +30,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private String CREATE_MAIL = "create table mail (id integer primary key autoincrement, "
             + "mail_id varchar(45), from_userid varchar(32), to_userid varchar(32), time integer, " +
             "content varchar(2000),theme varchar(100),is_read integer,state integer)";
-
+    public static final String CREATE_PERSON="create table Person("+"id integer primary key autoincrement, "
+            + "avatorurl text, " + "name text, " + "phonenumber text)";
     public MyDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
         this.context = context;
@@ -43,6 +44,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_FILE);
         db.execSQL(CREATE_MAIL);
         db.execSQL(CREATE_RECENT_MESSAGE);
+        db.execSQL(CREATE_PERSON);
     }
 
     @Override

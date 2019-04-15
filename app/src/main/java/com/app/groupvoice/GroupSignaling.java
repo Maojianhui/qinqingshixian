@@ -49,4 +49,10 @@ public class GroupSignaling {
     public void setLevel(String level) {
         this.level = level;
     }
+    public String toRTPHeartBeatString(){
+       return  "{"+"\"devid\":"+"\""+devid+"\""+"}";
+    }
+    public String toHeartBeatString(){
+        return  "{"+"\"signal\":"+"\""+devid+"\""+"}";
+    }
 }

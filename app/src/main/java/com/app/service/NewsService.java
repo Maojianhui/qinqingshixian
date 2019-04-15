@@ -1,5 +1,6 @@
 package com.app.service;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -9,14 +10,17 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.app.R;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.tools.NewsVideo;
+import com.app.tools.SipCallMananger;
+import com.app.ui.VideoCallActivity;
 import com.app.video.H264Sending;
-import com.app.R;
 
 import java.util.List;
 
@@ -30,6 +34,7 @@ public class NewsService extends Service {
     private int TASK_NOTIFICATION_ID = 0x1123;
     private int MAIL_NOTIFICATION_ID = 0x1124;
 
+    @SuppressLint("HandlerLeak")
     @Override
     public void onCreate() {
         super.onCreate();
@@ -37,16 +42,47 @@ public class NewsService extends Service {
         SipInfo.notifymedia = new Handler() {
             @Override
             public void handleMessage(Message msg) {
+                if (msg.what == 0x1111) {
+                   /* System.out.println("收到了 视频邀请");
+                    VideoInfo.rtpIp = VideoInfo.media_info_ip;
+                    VideoInfo.rtpPort = VideoInfo.media_info_port;
+                    VideoInfo.magic = VideoInfo.media_info_magic;
+                    
+                    Intent intent = new Intent(NewsService.this, VideoCallActivity.class);
+                    Log.d("echo_tag", "1 - NewsService - 收到视频请求 - SipInfo.isWaitingFeedback： " + SipInfo.isWaitingFeedback);
+    
+                    SipInfo.inviteResponse = true;
+                    SipInfo.sipDev.sendMessage(SipMessageFactory.createResponse(SipInfo.msg, 200, "OK", BodyFactory.createMediaResponseBody("MOBILE_S9")));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+               */
 
-                System.out.println("收到了 视频邀请");
-                Intent intent = new Intent(NewsService.this, H264Sending.class);
-                SipInfo.inviteResponse = true;
-                SipInfo.sipDev.sendMessage(SipMessageFactory.createResponse(SipInfo.msg, 200, "OK", BodyFactory.createMediaResponseBody("MOBILE_S9")));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                super.handleMessage(msg);
+                    Log.d("echo_tag", "1 - NewsService - 收到视频请求 - SipInfo.isWaitingFeedback： " + SipInfo.isWaitingFeedback);
+
+                    SipInfo.inviteResponse = true;
+                    SipInfo.sipDev.sendMessage(SipMessageFactory.createResponse(SipInfo.msg, 200, "OK", BodyFactory.createMediaResponseBody("MOBILE_S9")));
+
+                    if (SipInfo.isWaitingFeedback) {  // 主动呼叫不用再呼叫一次，直接去视频界面
+                        SipInfo.isWaitingFeedback = false; // 改变这个标志，sipCallManager中会跳转到videoCall界面
+                    } else {
+                        SipCallMananger.getInstance().callVideoChat(NewsService.this, false);
+                    }
+                    super.handleMessage(msg);
+                } else if (msg.what == 0x2222) {
+                    LocalBroadcastManager.getInstance(NewsService.this).sendBroadcast(new Intent(VideoCallActivity.BROADCAST_ACTION));
+                }
+//                else if(msg.what==0x3333){
+//                    System.out.println("收到了 视频邀请");
+//                    Intent intent = new Intent(NewsService.this, H264Sending.class);
+//                    SipInfo.inviteResponse = true;
+//                    SipInfo.sipDev.sendMessage(SipMessageFactory.createResponse(SipInfo.msg, 200, "OK", BodyFactory.createMediaResponseBody("MOBILE_S9")));
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(intent);
+//                    super.handleMessage(msg);
+//                }
             }
         };
+            
         SipInfo.newTask = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -70,6 +106,7 @@ public class NewsService extends Service {
                 super.handleMessage(msg);
             }
         };
+        
         SipInfo.newMail = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -103,7 +140,7 @@ public class NewsService extends Service {
     /*
      * 判断服务是否启动,context上下文对象 ，className服务的name
      */
-    public static boolean isServiceRunning(Context mContext, String className) {
+    public static boolean isServiceRunning(Context mContext) {
 
         boolean isRunning = false;
         ActivityManager activityManager = (ActivityManager) mContext
@@ -116,7 +153,7 @@ public class NewsService extends Service {
         }
 
         for (int i = 0; i < serviceList.size(); i++) {
-            if (serviceList.get(i).service.getClassName().equals(className)) {
+            if (serviceList.get(i).service.getClassName().equals(NewsService.class.getName())) {
                 isRunning = true;
                 break;
             }

@@ -2,8 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background"
-    android:orientation="vertical">
+    android:background="#f8f8fa"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
+    <!--android:background="@drawable/main_background"-->
+    <!--android:background="#f5c25e"-->
 
 
     <LinearLayout

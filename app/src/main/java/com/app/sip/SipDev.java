@@ -1,12 +1,17 @@
 package com.app.sip;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.PowerManager;
 import android.util.Log;
 
 import com.app.groupvoice.GroupInfo;
+import com.app.model.MessageEvent;
+import com.app.ui.VideoDial;
+import com.app.ui.VideoPlay;
 import com.app.video.VideoInfo;
 
+import org.greenrobot.eventbus.EventBus;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -47,7 +52,7 @@ public class SipDev extends SipProvider {
     }
 
     public TransportConnId sendMessage(Message msg) {
-        return sendMessage(msg, SipInfo.serverIp, SipInfo.SERVER_PORT_DEV);
+         return sendMessage(msg, SipInfo.serverIp, SipInfo.SERVER_PORT_DEV);
     }
 
     public TransportConnId sendMessage(final Message msg, final String destAddr, final int destPort) {
@@ -158,6 +163,15 @@ public class SipDev extends SipProvider {
     }
 
     private boolean requestParse(Message msg) {
+        Log.e("echo_tag", "0 - sipDev - requestParse: " + msg);
+
+        if(msg.isBye()){
+            SipInfo.notifymedia.sendEmptyMessage(0x2222);
+            Message bye = SipMessageFactory.createByeRequest(SipInfo.sipUser, SipInfo.toDev, SipInfo.user_from);//创建结束视频请求
+            SipInfo.sipUser.sendMessage(bye);
+            return true;
+        }
+
         String body = msg.getBody();
         if (body != null) {
             StringReader sr = new StringReader(body);
@@ -189,6 +203,7 @@ public class SipDev extends SipProvider {
                         SipInfo.sipDev.sendMessage(message);
                         return true;
                     case "media":
+                        Log.e(TAG + "_echo" + "_request",   msg.toString());
                         Element peerElement = (Element) root.getElementsByTagName("peer").item(0);
                         Element magicElement = (Element) root.getElementsByTagName("magic").item(0);
                         String peer = peerElement.getFirstChild().getNodeValue();
@@ -203,13 +218,67 @@ public class SipDev extends SipProvider {
                                 e.printStackTrace();
                             }
                         }
+
                         SipInfo.msg = msg;
-                        SipInfo.notifymedia.sendEmptyMessage(0x1111);
+                        Log.d(TAG,"视频类型"+SipInfo.single);
+//                        if(SipInfo.single==true){
+//                            SipInfo.notifymedia.sendEmptyMessage(0x3333);
+//                        }else{
+                            SipInfo.notifymedia.sendEmptyMessage(0x1111);
+                            Log.e(TAG + "_echo" , "SipInfo.notifymedia.sendEmptyMessage(0x1111)");
+//                        }
+                        EventBus.getDefault().post(new MessageEvent("关闭"));
                         return true;
                     case "recvaddr":
                         VideoInfo.endView = true;
                         SipInfo.sipDev.sendMessage(SipMessageFactory.createResponse(msg, 200, "Ok", ""));
                         return true;
+                    case "call_response":{
+                        EventBus.getDefault().post(new MessageEvent("结束"));
+                        Element useridElement = (Element) root.getElementsByTagName("operate").item(0);
+                        final String operate = useridElement.getFirstChild().getNodeValue();
+                        if(operate.equals("agree")){
+//                            SipInfo.IsVideoOn=true;
+                            Intent intent = new Intent("com.example.broadcast.CALL_AGREE");
+//                        context.getApplicationContext().sendBroadcast(intent);
+                            context.sendBroadcast(intent);
+//                        Intent intent=new Intent(SipUser.class,VideoConnect.class);
+
+                        }else if(operate.equals("refuse")){
+                            EventBus.getDefault().post(new MessageEvent("取消"));
+                        }else if(operate.equals("cancel")){
+                            EventBus.getDefault().post(new MessageEvent("取消"));
+//                            Log.i("xml","111");
+                        }
+                        return  true;
+                    }
+                    case "video_busy":
+                        Element stausElement=(Element)root.getElementsByTagName("status").item(0);
+                        final String staus=stausElement.getFirstChild().getNodeValue();
+                        if(staus.equals("true")){
+                            EventBus.getDefault().post(new MessageEvent("忙线中"));
+                        }
+                        break;
+
+                    case "stop_monitor":
+                        EventBus.getDefault().post(new MessageEvent("关闭视频"));
+                        break;
+
+                    case "operation": {
+//                        Log.i(TAG, "12435235");
+//                        Element useridElement = (Element) root.getElementsByTagName("operate").item(0);
+//                        final String operate = useridElement.getFirstChild().getNodeValue();
+                        Intent intent = new Intent("com.example.broadcast.CALL_REQUEST");
+//                        context.getApplicationContext().sendBroadcast(intent);
+                        context.sendBroadcast(intent);
+//                        Intent intent=new Intent(SipUser.class,VideoConnect.class);
+                        return true;
+
+                    }
+                    case "suspend_monitor":
+                        EventBus.getDefault().post(new MessageEvent("停止浏览"));
+                        break;
+
                     case "task": {
 //                        Element userIdElement = (Element) root.getElementsByTagName("user_id").item(0);
 //                        Element devIdElement = (Element) root.getElementsByTagName("dev_id").item(0);

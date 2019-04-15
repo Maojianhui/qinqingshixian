@@ -177,11 +177,11 @@ public class CustomListView extends ListView implements OnScrollListener {
 		super(pContext, pAttrs, pDefStyle);
 		init(pContext);
 	}
-	@Override
-	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		return super.onInterceptTouchEvent(ev)
-				&& mGestureDetector.onTouchEvent(ev);
-	}
+//	@Override
+//	public boolean onInterceptTouchEvent(MotionEvent ev) {
+//		return super.onInterceptTouchEvent(ev)
+//				&& mGestureDetector.onTouchEvent(ev);
+//	}
 
 	class YScrollDetector extends SimpleOnGestureListener {
 		@Override
@@ -740,7 +740,12 @@ public class CustomListView extends ListView implements OnScrollListener {
 	 */
 	public void onRefreshComplete() {
 		// 下拉刷新后是否显示第一条Item 
-		if(mIsMoveToFirstItemAfterRefresh)setSelection(0);
+		if(mIsMoveToFirstItemAfterRefresh)
+		{
+			setSelection(0);
+		}else{
+			setSelection(5);
+		}
 		
 		mHeadState = DONE;
 		// 最近更新: Time

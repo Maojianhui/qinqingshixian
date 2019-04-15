@@ -293,7 +293,7 @@ public class MenuFragment extends Fragment {
                                 startActivity(gallerIntent);
                                 break;
                             case CHSCHANGE:
-                                Intent chschange=new Intent(getActivity(),ChsChange.class);
+                                Intent chschange=new Intent(getActivity(),FriendCallActivity.class);
                                 startActivity(chschange);
                                 break;
                             case UPDATE:

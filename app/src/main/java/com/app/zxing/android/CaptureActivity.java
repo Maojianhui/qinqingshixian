@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.app.R;
+import com.app.groupvoice.GroupInfo;
 import com.app.sip.SipInfo;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
@@ -26,6 +27,8 @@ import com.app.zxing.view.ViewfinderView;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+
+import static com.app.R.id.devid;
 
 /**
  * 这个activity打开相机，在后台线程做常规的扫描；它绘制了一个结果view来帮助正确地显示条形码，在扫描的时候显示反馈信息，
@@ -45,6 +48,7 @@ public final class CaptureActivity extends Activity implements
 	private IntentSource source;
 	private Collection<BarcodeFormat> decodeFormats;
 	private Map<DecodeHintType, ?> decodeHints;
+	private String text;
 	private String characterSet;
 	// 电量控制
 	private InactivityTimer inactivityTimer;
@@ -94,6 +98,7 @@ public final class CaptureActivity extends Activity implements
 			}
 		});
 	}
+
 
 	@Override
 	protected void onResume() {
@@ -186,9 +191,14 @@ public final class CaptureActivity extends Activity implements
 			beepManager.playBeepSoundAndVibrate();
 
 			Toast.makeText(this, "扫描成功", Toast.LENGTH_SHORT).show();
-			SipInfo.devId=rawResult.getText();
-			//要存在本地
-			Log.i("devid=   ",SipInfo.devId);
+			String devid=rawResult.getText();
+//			text=rawResult.getText();
+//			String[] s=text.split(" ");
+//			SipInfo.devId=s[0];
+//			GroupInfo.port=Integer.parseInt(s[1]);
+//			//要存在本地
+//			Log.i("111devid=   ",SipInfo.devId);
+//			Log.i("111port=   ","aaa"+GroupInfo.port);
 			Intent intent = getIntent();
 			intent.putExtra("codedContent", rawResult.getText());
 			intent.putExtra("codedBitmap", barcode);

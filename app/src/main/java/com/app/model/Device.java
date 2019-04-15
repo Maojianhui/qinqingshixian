@@ -6,12 +6,18 @@ package com.app.model;
  */
 
 public class Device implements Comparable<Device> {
+    private String id;
+    private String avatar;
+    private String nickname;
+    private String userid;
     private String devId;
     private String name;
     private String phoneNum;
     private String devType;
     private boolean isLive;
     private boolean isSelect;
+    private  boolean isOnline;
+
 
     public Device() {
     }
@@ -23,11 +29,20 @@ public class Device implements Comparable<Device> {
         this.devType = devType;
         this.isLive = isLive;
         this.isSelect = false;
+        this.isOnline=false;
     }
+    public boolean getStaus(){return isOnline;}
+    public void setStaus(boolean online){isOnline=online;}
+
+
+    public String getId(){return id;}
+    public String getAvatar(){return avatar;}
+    public String getNickname(){return nickname;}
 
     public String getDevId() {
         return devId;
     }
+    public String getUserId() {return userid;}
 
     public String getName() {
         return name;
@@ -72,6 +87,12 @@ public class Device implements Comparable<Device> {
     public void setSelect(boolean select) {
         isSelect = select;
     }
+
+    public void setUserId(String userId){this.userid=userid;}
+
+    public void setAvatar(String avatar){this.avatar=avatar;}
+
+    public void setNickname(String nickname){this.nickname=nickname;}
 
     @Override
     public int compareTo(Device another) throws ClassCastException, NullPointerException {
