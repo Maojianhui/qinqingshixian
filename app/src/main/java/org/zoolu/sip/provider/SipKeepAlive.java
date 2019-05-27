@@ -94,7 +94,7 @@ public class SipKeepAlive extends UdpKeepAlive
    }
 
 
-   /** Main thread. */
+   /** HomeActivity thread. */
    public void run()
    {  super.run();
       sip_provider=null;

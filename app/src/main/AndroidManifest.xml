@@ -1,35 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.app">
-
     <!-- 访问网络连接权限 -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- 使用SIP连接权限 -->
-    <uses-permission android:name="android.permission.USE_SIP" />
-    <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <!-- 允许程序在手机屏幕关闭之后后台程序仍然进行 -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <!-- 访问麦克风录制声音权限 -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <!-- 访问内存卡 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!-- 写内存卡 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- 在SDCard中创建与删除文件权限 -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 使用SIP连接权限 -->
+    <uses-permission android:name="android.permission.USE_SIP" /> <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 允许程序在手机屏幕关闭之后后台程序仍然进行 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- 访问麦克风录制声音权限 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- 访问内存卡 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 写内存卡 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 在SDCard中创建与删除文件权限 -->
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <!-- 振动 -->
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <!-- 用于进行网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- 用于访问GPS定位 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- 获取运营商信息，用于支持提供运营商信息相关的接口 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <!-- 相机 -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- 振动 -->
+    <uses-permission android:name="android.permission.VIBRATE" /> <!-- 用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 用于访问GPS定位 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 获取运营商信息，用于支持提供运营商信息相关的接口 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- 相机 -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
@@ -51,10 +37,8 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- 打电话权限 -->
-    <uses-permission android:name="android.permission.CALL_PHONE" />
-    <!-- 锁屏功能权限 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 打电话权限 -->
+    <uses-permission android:name="android.permission.CALL_PHONE" /> <!-- 锁屏功能权限 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
@@ -66,6 +50,8 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ui.Message.SystemNotify"></activity>
+
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="c185fab426edd3f538ebd949a2b43adf" />
@@ -119,7 +105,7 @@
             android:name=".ui.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.Main"
+            android:name=".ui.HomeActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".friendCircleMain.adapter.ImagePagerActivity"
@@ -164,9 +150,6 @@
             android:name=".ui.VideoPlay"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.ChatActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.FileChooserActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -198,9 +181,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.VideoLook"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.SendLocation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.SmallVideoPlay"
@@ -255,7 +235,6 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.friendActivity" />
         <activity
             android:name=".ui.SoftwareIntruct"
             android:screenOrientation="portrait" />
@@ -270,7 +249,7 @@
         <activity android:name=".ui.VerificodeLogin" />
         <activity android:name=".ui.SetNewPassword" />
         <activity android:name=".ui.FamilyCircle" />
-        <activity android:name=".ui.MainActivity">
+        <activity android:name=".ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -283,16 +262,15 @@
         <activity android:name=".ui.AddressManage" />
         <activity android:name=".ui.AddNewAddress" />
         <activity android:name=".ui.CommunityActivity" />
-        <activity android:name=".ui.MyCouponActivity" />
-        <!--<activity android:name=".ui.ApplicationActivity" />-->
-        <!--<activity android:name=".ui.application.ElemeActivity" />-->
-        <!--<activity android:name=".ui.application.MeituanActivity" />-->
-        <!--<activity android:name=".ui.application.PetActivity" />-->
-        <!--<activity android:name=".ui.application.Daojia58Activity" />-->
-        <!--<activity android:name=".ui.application.XdfActivity" />-->
-        <!--<activity android:name=".ui.application.AqyActivity" />-->
+        <activity android:name=".ui.MyCouponActivity" /> <!-- <activity android:name=".ui.ApplicationActivity" /> -->
+        <!-- <activity android:name=".ui.application.ElemeActivity" /> -->
+        <!-- <activity android:name=".ui.application.MeituanActivity" /> -->
+        <!-- <activity android:name=".ui.application.PetActivity" /> -->
+        <!-- <activity android:name=".ui.application.Daojia58Activity" /> -->
+        <!-- <activity android:name=".ui.application.XdfActivity" /> -->
+        <!-- <activity android:name=".ui.application.AqyActivity" /> -->
         <activity android:name=".ui.Address.UserAddress" />
-        <activity android:name=".ui.Address.AddressSupervise"></activity>
+        <activity android:name=".ui.Address.AddressSupervise" />
     </application>
 
 </manifest>

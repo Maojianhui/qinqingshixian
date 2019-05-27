@@ -1,0 +1,18 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.app.ui.fragment.CommunityFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <!--<WebView-->
+        <!--android:id="@+id/web_view"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+    <!--</WebView>-->
+    <com.maogousoft.ytwebview.YTWebView
+        android:id="@+id/ytWebView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></com.maogousoft.ytwebview.YTWebView>
+
+</FrameLayout>

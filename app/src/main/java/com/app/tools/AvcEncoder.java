@@ -33,8 +33,8 @@ public class AvcEncoder {
     private byte[] rotateYuv420 = null;
     private final int previewWidth =640;     //水平像素
     private final int previewHeight = 480;     //垂直像素
-//    private final int previewWidth = 320;     //水平像素
-//    private final int previewHeight = 240;     //垂直像素
+//    private final int previewWidth = 353;     //水平像素
+//    private final int previewHeight = 288;     //垂直像素
 
     private long BUFFER_TIMEOUT = 0;
     YuvUtils yuvPic=new YuvUtils();

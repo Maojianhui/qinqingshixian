@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/newbackground1"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/btndismiss"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:background="@color/white">
+        <ImageView
+            android:id="@+id/iv_back7"
+            android:layout_width="25dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/leftarrow"/>
+
+        <TextView
+            android:id="@+id/titleset"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:text="家人动态"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+        <ImageView
+            android:id="@+id/iv_fatie"
+            android:layout_width="25dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="15dp"
+            android:src="@drawable/ic_fabu"/>
+
+    </RelativeLayout>
+    <com.app.friendCircleMain.custonListView.CustomListView
+        android:background="@color/white"
+        android:id="@+id/list"
+        android:layout_width="350dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:cacheColorHint="#00000000"
+        android:fadingEdge="none"
+        android:listSelector="#00000000"
+        android:scrollingCache="false"
+        android:animationCache="false"
+        android:smoothScrollbar="true"
+        android:layout_marginTop="10dp" />
+</LinearLayout>

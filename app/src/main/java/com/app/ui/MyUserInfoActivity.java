@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -59,16 +60,45 @@ import org.zoolu.sip.address.SipURL;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.app.model.Constant.URL_updateSex;
 import static com.app.model.Constant.id;
+import static com.app.model.Constant.sex;
 import static com.app.sip.SipInfo.devName;
 
 @SuppressLint("SdCardPath")
 public class MyUserInfoActivity extends Activity implements View.OnClickListener {
+
+//    private static class MyHandler extends Handler{
+//        private final WeakReference<MyUserInfoActivity> mActivity;
+//
+//        public MyHandler(MyUserInfoActivity activity){
+//            mActivity=new WeakReference<MyUserInfoActivity>(activity);
+//        }
+//
+//        @Override
+//        public void handleMessage(Message msg){
+//            MyUserInfoActivity activity=mActivity.get();
+//            if(activity!=null){
+////                activity.handleMessage(msg);
+//            }
+//        }
+//
+//
+//
+//        private static final Runnable sRunnable=new Runnable() {
+//            @Override
+//            public void run() {
+//
+//            }
+//        };
+//    }
+//    private final MyHandler mHandler=new MyHandler(this);
 
     private static final int CAMERA_REQUEST_CODE = 1;
     private RelativeLayout re_avatar;
@@ -88,6 +118,7 @@ public class MyUserInfoActivity extends Activity implements View.OnClickListener
     private static final int UPDATE_FXID = 4;// 结果
     private static final int UPDATE_NICK = 5;// 结果
     private LoadPicture avatarLoader;
+    private SharedPreferences sp;
     String hxid;
     String nick;
     String SdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -95,6 +126,7 @@ public class MyUserInfoActivity extends Activity implements View.OnClickListener
     private String picPath;
     private View inflate;
     private Uri imageUri;
+    private int background;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,13 +160,16 @@ public class MyUserInfoActivity extends Activity implements View.OnClickListener
         iv_avatar = (CircleImageView) this.findViewById(R.id.iv_avatar);
         tv_name = (TextView) this.findViewById(R.id.ttv_name);
         tv_sex1 = (TextView) this.findViewById(R.id.tv_sex1);
+        tv_sex1.setText(sex);
         tv_name.setText(nick);
         titleset = (TextView) this.findViewById(R.id.titleset);
         TextPaint tp = titleset.getPaint();
         tp.setFakeBoldText(true);
         //获取sharedPreferences对象
-        SharedPreferences sharedPreferences = getSharedPreferences("sex", MODE_PRIVATE);
-        String sex = sharedPreferences.getString("sex", "");
+//        SharedPreferences sharedPreferences = getSharedPreferences("sex", MODE_PRIVATE);
+        sp= getSharedPreferences("sex", MODE_PRIVATE);
+        String sex = sp.getString("sex", "");
+
         if (!(sex.equals(""))) {
             tv_sex1.setText(sex);
         }
@@ -171,18 +206,36 @@ public class MyUserInfoActivity extends Activity implements View.OnClickListener
 
     /*性别选择*/
     private void showChooseDialog() {
+        background=sp.getInt("background",0);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setSingleChoiceItems(sexArray, 0, new DialogInterface.OnClickListener() {
+        builder.setSingleChoiceItems(sexArray,background, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //获取sharedPreferences对象
-                SharedPreferences sharedPreferences = getSharedPreferences("sex", MODE_PRIVATE);
                 //获取editor对象
-                SharedPreferences.Editor editor = sharedPreferences.edit();//获取编辑器
+                SharedPreferences.Editor editor = sp.edit();//获取编辑器
                 //存储键值对
                 editor.putString("sex", sexArray[which]);
+                editor.putInt("background",which);
                 editor.apply();//提交修改
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        response=GetPostUtil.sendGet1111(Constant.URL_updateSex,"id="+Constant.id+"&gender="+
+                                sexArray[which]);
+                        if ((response != null) && !("".equals(response))) {
+                            JSONObject obj2 = JSON.parseObject(response);
+                            String msg = obj2.getString("msg");
+                            if (msg.equals("success")){
+                                Log.i("MyUserInfo","成功");
+                            }
+                            else{
+                                Log.i("MyUserInfo","失败");
+                            }
 
+                        }
+                    }
+                }).start();
                 tv_sex1.setText(sexArray[which]);
                 dialog.dismiss();
             }
@@ -429,7 +482,7 @@ public class MyUserInfoActivity extends Activity implements View.OnClickListener
             } else if (msg.what == 222) {
                 dialog.dismiss();
                 ToastUtils.showShort(MyUserInfoActivity.this, "头像上传失败");
-                return;
+//                return;
             }
         }
     };

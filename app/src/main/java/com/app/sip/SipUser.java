@@ -44,6 +44,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -80,6 +81,7 @@ public class SipUser extends SipProvider {
 
 
 
+
     public SipUser(String via_addr, int host_port, Context context) {
         super(via_addr, host_port, PROTOCOLS, null);
         this.context = context;
@@ -96,13 +98,15 @@ public class SipUser extends SipProvider {
         Log.i(TAG, msg.toString());
         TransportConnId id = null;
         try {
-            id = pool.submit(new Callable<TransportConnId>() {
-                public TransportConnId call() {
-                    return sendMessage(msg, "udp", destAddr, destPort, 0);
-                }
-            }).get();
+                id = pool.submit(new Callable<TransportConnId>() {
+                    public TransportConnId call() {
+                        return sendMessage(msg, "udp", destAddr, destPort, 0);
+                    }
+                }).get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
+        }catch (RejectedExecutionException e){
+
         }
         return id;
     }

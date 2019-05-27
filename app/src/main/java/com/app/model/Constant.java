@@ -2,6 +2,8 @@ package com.app.model;
 
 import com.app.sip.SipInfo;
 
+import java.text.Format;
+
 /**
  * Created by acer on 2016/9/5.
  */
@@ -88,10 +90,14 @@ public static Runnable runnable=new Runnable() {
     public static final String URL_deleteAddress=FORMT+"users/deleteAddress";
     public static final String URL_getAddress=FORMT+"users/getAddress";
     public static final String URL_updateAddress=FORMT+"users/updateAddress";
+    public static final String URL_updateSex= FORMT+"users/updateSex";
+    public static final String URL_updateNotify=FORMT+"users/messageNotify";
     public static String nick;
     public static String avatar;
     public static String phone;
     public static String id;
+    public static String sex;
+    public static String isNotify;//新消息是否通知
     public static String res;
     public static String groupid;
     public static String groupid1;

@@ -72,6 +72,7 @@ public class SaomaActivity extends Activity implements View.OnClickListener {
 
     String devId = SipInfo.paddevId;
     SipURL sipURL = new SipURL(devId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
+    private String string;
 
 
     @Override
@@ -93,7 +94,11 @@ public class SaomaActivity extends Activity implements View.OnClickListener {
         bt_bind.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                        show(v);
+                try {
+                    show(v);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         SdCard = Environment.getExternalStorageDirectory().getAbsolutePath() + "/qinqingzaixian";

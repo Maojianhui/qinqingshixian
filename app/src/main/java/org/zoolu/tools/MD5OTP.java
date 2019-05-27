@@ -231,9 +231,9 @@ public class MD5OTP
    }
 
 
-   // **************************** Main ****************************
+   // **************************** HomeActivity ****************************
 
-   /** Main method. */
+   /** HomeActivity method. */
    public static void main(String[] args)
    {  
       if (args.length<2)

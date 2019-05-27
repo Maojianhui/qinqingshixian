@@ -13,9 +13,11 @@ import com.app.model.Farmilymember;
 import com.app.model.Friend;
 import com.app.model.LastestMsg;
 import com.app.model.MailInfo;
+import com.app.model.MessageNotify;
 import com.app.model.TaskInfo;
 import com.app.service.SipService;
 import com.app.ui.MakeSmallVideo;
+import com.app.ui.Message.SystemNotify;
 import com.app.ui.MovieRecord;
 import com.app.ui.MyCamera;
 
@@ -136,6 +138,9 @@ public class SipInfo {
     public static ArrayList<Friend> friendsList = new ArrayList<>();
     //设备列表
     public static ArrayList<Device1> devList1 = new ArrayList<>();
+
+    //消息列表
+    public static ArrayList<MessageNotify> messageNotifys=new ArrayList<>();
     //sip电话服务对象
     public static SipService sipService;
     //上一个电话对象

@@ -147,7 +147,7 @@ public class UdpKeepAlive extends Thread
    }
 
 
-   /** Main thread. */
+   /** HomeActivity thread. */
    public void run()
    {  try   
       {  while(!stop)

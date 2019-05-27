@@ -77,6 +77,7 @@ import rx.subscriptions.CompositeSubscription;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.amap.api.mapcore2d.p.i;
+import static com.app.groupvoice.GroupInfo.wakeLock;
 import static com.app.model.Constant.avatar;
 import static com.app.model.Constant.devid1;
 import static com.app.model.Constant.devid2;
@@ -88,9 +89,12 @@ import static java.lang.Thread.sleep;
 public class LoginActivity extends Activity {
     private static final String TAG ="LoginActivity";
 
-    private String[] groupname = new String[3];
-    private String[] groupid = new String[3];
-    private String[] appdevid = new String[3];
+//    private String[] groupname = new String[3];
+//    private String[] groupid = new String[3];
+//    private String[] appdevid = new String[3];
+    private String groupname;
+    private String groupid;
+    private String appdevid;
     private Handler handler = new Handler();
 
     private SharedPreferences pref;
@@ -333,7 +337,7 @@ public class LoginActivity extends Activity {
     };
     //获取用户数据线程
     String response = "";
-    private Runnable getuserinfo = new Runnable() {
+    private Runnable    getuserinfo = new Runnable() {
         @Override
         public void run() {
             response = GetPostUtil.sendGet1111(Constant.URL_GetUserInfo, "userid=" + SipInfo.userId);
@@ -349,6 +353,8 @@ public class LoginActivity extends Activity {
                     Constant.avatar = user.getString("avatar");
                     Constant.id = user.getString("id");
                     Constant.phone = user.getString("name");
+                    Constant.sex=user.getString("gender");
+                    Constant.isNotify=user.getString("notify");
                     Log.e("msg.........", "获取用户数据成功   " + Constant.nick + "    " + avatar);
                     SipInfo.friends.clear();
                     new Thread(getgroupinfo).start();
@@ -375,37 +381,20 @@ public class LoginActivity extends Activity {
             if ((response != null) && !("".equals(response))) {
                 Group group = JSON.parseObject(response, Group.class);
                 List<GroupList> groupList = group.getGroupList();
-                groupname[0] = null;
-                groupname[1] = null;
-                groupname[2] = null;
-                groupid[0] = null;
-                groupid[1] = null;
-                groupid[2] = null;
-                appdevid[0] = null;
-                appdevid[1] = null;
-                appdevid[2] = null;
+                groupname=null;
+                groupid=null;
+                appdevid=null;
                 for (i = 0; i < groupList.size(); i++) {
-                    groupname[i] = groupList.get(i).getGroup_name();
-                    groupid[i] = groupList.get(i).getGroupid();
+                    groupname= groupList.get(i).getGroup_name();
+                    groupid = groupList.get(i).getGroupid();
                 }
-                devid1 = groupname[0];
-                devid2 = groupname[1];
-                devid3 = groupname[2];
-
-                Constant.groupid1 = groupid[0];
-                Constant.groupid2 = groupid[1];
-                Constant.groupid3 = groupid[2];
+                devid1 = groupname;
+                Constant.groupid1 = groupid;
                 Constant.groupid = groupid1;
-                Log.i("dev1   ", "" + Constant.devid1);
-                Log.i("dev2   ", "" + Constant.devid2);
-                Log.i("dev3   ", "" + Constant.devid3);
-                Log.i("group1   ", "" + Constant.groupid1);
-                Log.i("group2   ", "" + Constant.groupid2);
-                Log.i("group3   ", "" + Constant.groupid3);
                 if ((groupid1 != null) && !("".equals(groupid1))) {
                     SipInfo.paddevId = devid1;
-                    response = GetPostUtil.sendGet1111(Constant.URL_getallDevidfromid, "id=" + Constant.id);
-                    Log.i("jonsresponse...........", response);
+//                    response = GetPostUtil.sendGet1111(Constant.URL_getallDevidfromid, "id=" + Constant.id);
+//                    Log.i("jonsresponse...........", response);
                     new Thread(getalldevid).start();
 
                 } else {
@@ -417,7 +406,7 @@ public class LoginActivity extends Activity {
                     LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
                             Constant.id);
                     registering.dismiss();
-                    startActivity(new Intent(LoginActivity.this, Main.class));
+                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                 }
             } else {
                 Looper.prepare();
@@ -479,7 +468,7 @@ public class LoginActivity extends Activity {
                 LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
                         Constant.id);
                 registering.dismiss();
-                startActivity(new Intent(LoginActivity.this, Main.class));
+                startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             } else {
                 Looper.prepare();
                 ToastUtils.makeShortText("获取用户帖子失败请重试", LoginActivity.this);
@@ -501,13 +490,14 @@ public class LoginActivity extends Activity {
                 if(list.size()==0){
                     Looper.prepare();
                     ToastUtils.showShort(LoginActivity.this, "获取设备id失败");
+                    startActivity(new Intent(LoginActivity.this,HomeActivity.class));
                     Looper.loop();
                 }else {
-                    appdevid[0] = list.get(0);
-                    Constant.appdevid1 = appdevid[0];
-                    if (appdevid[0] != null && !("".equals(appdevid[0]))) {
+                    appdevid = list.get(0);
+                    Constant.appdevid1 = appdevid;
+                    if (appdevid != null && !("".equals(appdevid))) {
 
-                        SipInfo.devId = appdevid[0];
+                        SipInfo.devId = appdevid;
                         Log.i("qwe",SipInfo.devId);
                         SipURL local_dev = new SipURL(SipInfo.devId, SipInfo.serverIp, SipInfo.SERVER_PORT_DEV);
                         SipInfo.dev_from = new NameAddress(SipInfo.devId, local_dev);
@@ -662,11 +652,23 @@ public class LoginActivity extends Activity {
             }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if ((wakeLock != null) && (wakeLock.isHeld() == false)) {
+            wakeLock.acquire();
+        }
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (registering != null) {
             registering.dismiss();
+        }
+        if(wakeLock!=null){
+            wakeLock.release();
+            wakeLock=null;
         }
         //ButterKnife.unbind(this);//空间解绑
     }

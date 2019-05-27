@@ -7,6 +7,8 @@ buildscript {
 //    }
     repositories {
         maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+        google()
+        maven { url 'https://dl.bintray.com/umsdk/release' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
@@ -26,9 +28,12 @@ allprojects {
     repositories {
         jcenter()
         maven { url "https://jitpack.io" }
+        maven { url "https://maven.google.com" }
+        maven { url 'https://dl.bintray.com/umsdk/release' }
     }
     repositories {
         maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+        google()
     }
 }
 

@@ -223,7 +223,7 @@ public class MenuFragment extends Fragment {
 
             if (info.loadLabel(manager).equals("设置") || info.loadLabel(manager).equals("文件管理器")
                     || (info.activityInfo.applicationInfo.packageName.contains("com.app")
-                    && !info.activityInfo.applicationInfo.packageName.contains("com.app.main"))) {
+                    && !info.activityInfo.applicationInfo.packageName.contains("com.app.homeActivity"))) {
                 application.setType(MyApplicationInfo.TYPE_APP);
                 application.setTitle(info.loadLabel(manager));
                 application.packageName = info.activityInfo.applicationInfo.packageName;

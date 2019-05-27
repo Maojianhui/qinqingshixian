@@ -43,4 +43,13 @@ public class FirstMicroListDatasFirendpraise extends MyBaseBean{
 	public void setPraisetype(String praisetype) {
 		this.praisetype = praisetype;
 	}
+
+	@Override
+	public boolean equals(Object obj){
+		if(obj==null){
+			return false;
+		}
+		FirstMicroListDatasFirendpraise o = (FirstMicroListDatasFirendpraise) obj;
+		return this.nickname.equals(o.nickname);
+	}
 }

@@ -250,7 +250,7 @@ public class DigestAuthentication
 
 
 
-   /** Main method.
+   /** HomeActivity method.
      * It tests DigestAuthentication with the example provided in the RFC2617. */
    public static void main(String[] args)
    {

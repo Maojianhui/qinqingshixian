@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:id="@+id/activity_phonecall"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/newbackground1">
+
+    <include android:id="@+id/main1"
+        layout="@layout/fragment_title2" />
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:elevation="10dp">
+        <ImageView
+            android:background="@color/newbackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+        <LinearLayout
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <com.app.view.CircleImageView
+                android:layout_marginStart="10dp"
+                android:id="@+id/selectavator"
+                android:src="@drawable/defaultavator"
+                app:border_color="@color/black"
+                app:border_width="1dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+
+                />
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:textSize="18sp"
+                    android:text="联系人 ：   "
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <!--<EditText-->
+                <!--android:textSize="40sp"-->
+                <!--android:id="@+id/edit_name"-->
+                <!--android:background="@null"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+                <com.app.views.CleanEditText
+                    android:textSize="18sp"
+                    android:id="@+id/edit_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="点击输入姓名"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:textSize="18sp"
+                    android:text="电话号码："
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <!--<EditText-->
+                <!--android:textSize="40sp"-->
+                <!--android:id="@+id/edit_number"-->
+                <!--android:background="@null"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+                <com.app.views.CleanEditText
+                    android:textSize="18sp"
+                    android:id="@+id/edit_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="点击输入号码"/>
+            </LinearLayout>
+            <Button
+                android:layout_gravity="center_horizontal"
+                android:textSize="18sp"
+                android:id="@+id/add"
+                android:layout_marginTop="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="添加"
+                android:gravity="center"
+                android:textColor="@color/black"
+                />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

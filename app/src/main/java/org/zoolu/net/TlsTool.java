@@ -138,7 +138,7 @@ public class TlsTool
    }
 
 
-   /** Main method. */
+   /** HomeActivity method. */
    public static void main(String[] args)
    {  String store_file=null;
       char[] passwd=null;
